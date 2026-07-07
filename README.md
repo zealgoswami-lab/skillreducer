@@ -22,6 +22,8 @@ Every token in a skill description and body competes for context window space. S
 Download the latest `skillreducer` / `skillreducer.exe` from [GitHub Releases](https://github.com/zealgoswami-lab/skillreducer/releases), or build locally:
 
 ```bash
+check python version and if it is not 3.12 then create venv before running pip commnad.
+python -m venv venv
 pip install -e ".[build]"
 python build_binary.py
 # Output: dist/skillreducer  (or dist/skillreducer.exe on Windows)
