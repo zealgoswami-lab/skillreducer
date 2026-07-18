@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import shutil
 from pathlib import Path
 from typing import Any
@@ -7,7 +8,7 @@ from typing import Any
 from skillreducer.audit import audit_skill
 from skillreducer.config import Config
 from skillreducer.llm.client import LLMClient
-from skillreducer.models import ReduceReport, TokenStats
+from skillreducer.models import ReduceReport, TokenStats, TscgStats
 from skillreducer.parser import parse_skill_md, write_skill_md
 from skillreducer.stage1.compress import compress_description
 from skillreducer.stage1.agent import Stage1RoutingAgent
@@ -20,6 +21,15 @@ from skillreducer.stage2.disclose import (
 )
 from skillreducer.stage3.extract import extract_scripts_from_markdown
 from skillreducer.tokenizer import count_tokens
+from skillreducer.tscg import (
+    TscgError,
+    compress_tools,
+    find_existing_manifest,
+    load_tools_json,
+    tools_from_scripts,
+    write_mcp_manifest,
+    write_tscg_outputs,
+)
 
 
 def reduce_skill(
@@ -30,6 +40,9 @@ def reduce_skill(
     dry_run: bool = False,
     llm: Any | None = None,
     stage1_agent: Stage1RoutingAgent | None = None,
+    *,
+    tscg: bool | None = None,
+    tools_path: Path | None = None,
 ) -> ReduceReport:
     config = config or Config.load()
 
@@ -161,6 +174,20 @@ def reduce_skill(
             write_reference_file(ref_path, content, llm_client if llm_client.enabled else None)
             files_written.append(filename)
 
+    tscg_stats: TscgStats | None = None
+    run_tscg = config.tscg_enabled if tscg is None else tscg
+    if run_tscg:
+        tscg_stats, tscg_files, tscg_notes = _run_tscg_step(
+            skill_dir=skill.skill_dir,
+            out_skill_dir=out_skill_dir,
+            extracted_scripts=extracted_scripts,
+            tools_path=tools_path,
+            config=config,
+            dry_run=dry_run,
+        )
+        notes.extend(tscg_notes)
+        files_written.extend(tscg_files)
+
     optimized_stats = TokenStats(
         description=count_tokens(description),
         body=count_tokens(body),
@@ -175,4 +202,84 @@ def reduce_skill(
         description_changed=description != skill.description,
         files_written=files_written,
         stage_notes=notes,
+        tscg_stats=tscg_stats,
     )
+
+
+def _run_tscg_step(
+    *,
+    skill_dir: Path,
+    out_skill_dir: Path,
+    extracted_scripts: dict[str, str],
+    tools_path: Path | None,
+    config: Config,
+    dry_run: bool,
+) -> tuple[TscgStats | None, list[str], list[str]]:
+    notes: list[str] = []
+    files_written: list[str] = []
+    tools = None
+
+    if tools_path is not None:
+        try:
+            tools = load_tools_json(Path(tools_path))
+            notes.append(f"TSCG: loaded {len(tools)} tools from {tools_path}")
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            notes.append(f"TSCG skipped: failed to load tools ({exc})")
+            return None, files_written, notes
+    else:
+        existing = find_existing_manifest(skill_dir)
+        if existing is not None:
+            try:
+                tools = load_tools_json(existing)
+                notes.append(f"TSCG: loaded {len(tools)} tools from {existing.name}")
+            except (OSError, ValueError, json.JSONDecodeError) as exc:
+                notes.append(f"TSCG skipped: failed to load {existing.name} ({exc})")
+                return None, files_written, notes
+        elif extracted_scripts:
+            tools = tools_from_scripts(extracted_scripts)
+            notes.append(
+                f"TSCG: built {len(tools)} tool stubs from Stage 3 scripts"
+            )
+        else:
+            scripts_dir = skill_dir / "scripts"
+            if scripts_dir.is_dir():
+                script_rels = [
+                    f"scripts/{p.name}"
+                    for p in sorted(scripts_dir.iterdir())
+                    if p.is_file() and p.suffix.lower() in {".py", ".sh", ".bash"}
+                ]
+                if script_rels:
+                    tools = tools_from_scripts(script_rels)
+                    notes.append(
+                        f"TSCG: built {len(tools)} tool stubs from scripts/"
+                    )
+
+    if not tools:
+        notes.append(
+            "TSCG skipped: no tools (pass --tools, add mcp_manifest.json, or extract scripts)"
+        )
+        return None, files_written, notes
+
+    try:
+        result = compress_tools(
+            tools,
+            model=config.tscg_model,
+            profile=config.tscg_profile,
+        )
+    except TscgError as exc:
+        notes.append(f"TSCG skipped: {exc}")
+        if not dry_run:
+            write_mcp_manifest(out_skill_dir / "mcp_manifest.json", tools)
+            files_written.append("mcp_manifest.json")
+            notes.append("TSCG: wrote mcp_manifest.json without compression")
+        return None, files_written, notes
+
+    notes.extend(result.notes)
+    stats = TscgStats(
+        original_tokens=result.original_tokens,
+        compressed_tokens=result.compressed_tokens,
+        tool_count=len(tools),
+    )
+    if not dry_run:
+        files_written.extend(write_tscg_outputs(out_skill_dir, tools, result))
+    return stats, files_written, notes

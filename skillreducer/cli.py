@@ -44,6 +44,18 @@ def audit_cmd(path: Path, recursive: bool, config_path: Path | None) -> None:
 @click.option("--dry-run", is_flag=True, help="Compute report without writing files")
 @click.option("--config", "config_path", type=click.Path(exists=True, path_type=Path), default=None)
 @click.option("--no-llm", is_flag=True, help="Use heuristic mode without LLM API calls")
+@click.option(
+    "--tscg/--no-tscg",
+    default=None,
+    help="Compress tool schemas with TSCG (requires Node + npm install in skillreducer/tscg)",
+)
+@click.option(
+    "--tools",
+    "tools_path",
+    type=click.Path(exists=True, path_type=Path),
+    default=None,
+    help="Tool / MCP manifest JSON for TSCG (OpenAI, Anthropic, or {tools: [...]})",
+)
 def reduce_cmd(
     path: Path,
     output: Path,
@@ -52,11 +64,17 @@ def reduce_cmd(
     dry_run: bool,
     config_path: Path | None,
     no_llm: bool,
+    tscg: bool | None,
+    tools_path: Path | None,
 ) -> None:
     """Reduce skill token cost via routing compression and progressive disclosure."""
     config = Config.load(config_path)
     if no_llm:
         config.use_llm = False
+    if tscg is True:
+        config.tscg_enabled = True
+    elif tscg is False:
+        config.tscg_enabled = False
 
     skill_paths = find_skill_paths(path, recursive=recursive)
     if not skill_paths:
@@ -70,6 +88,8 @@ def reduce_cmd(
             config=config,
             stage=stage_num,
             dry_run=dry_run,
+            tscg=tscg,
+            tools_path=tools_path,
         )
         print_reduce_report(report)
 
@@ -81,6 +101,18 @@ def reduce_cmd(
 @click.option("--stage", type=click.Choice(["1", "2", "3"]), default=None, help="Run a single stage")
 @click.option("--dry-run", is_flag=True, help="Compute report without writing files")
 @click.option("--config", "config_path", type=click.Path(exists=True, path_type=Path), default=None)
+@click.option(
+    "--tscg/--no-tscg",
+    default=None,
+    help="Compress tool schemas with TSCG after optimization",
+)
+@click.option(
+    "--tools",
+    "tools_path",
+    type=click.Path(exists=True, path_type=Path),
+    default=None,
+    help="Tool / MCP manifest JSON for TSCG",
+)
 def agent_cmd(
     path: Path,
     output: Path,
@@ -88,9 +120,15 @@ def agent_cmd(
     stage: str | None,
     dry_run: bool,
     config_path: Path | None,
+    tscg: bool | None,
+    tools_path: Path | None,
 ) -> None:
     """Optimize skills using the Agno agent (skill folder in, updated files out)."""
     config = Config.load(config_path)
+    if tscg is True:
+        config.tscg_enabled = True
+    elif tscg is False:
+        config.tscg_enabled = False
     agent = SkillReducerAgent(config)
     stage_num = int(stage) if stage else None
 
@@ -104,6 +142,8 @@ def agent_cmd(
             output_dir=output,
             stage=stage_num,
             dry_run=dry_run,
+            tscg=tscg,
+            tools_path=tools_path,
         )
         if result.report:
             print_reduce_report(result.report)

@@ -70,6 +70,15 @@ def print_reduce_report(report: ReduceReport) -> None:
     )
     console.print(table)
 
+    if report.tscg_stats is not None:
+        t = report.tscg_stats
+        console.print("\n[bold]TSCG (tool schemas)[/bold]")
+        console.print(
+            f"  Tools: {t.tool_count} | "
+            f"{t.original_tokens} -> {t.compressed_tokens} tokens "
+            f"({t.savings * 100:.1f}% savings)"
+        )
+
     if report.files_written:
         console.print("\n[bold]Files written[/bold]")
         for name in report.files_written:

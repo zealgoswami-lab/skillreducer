@@ -20,6 +20,9 @@ _API_VERSION_ENV = ("api_version", "azure_api_version")
 _COMPRESSION_MODEL_ENV = ("compression_model", "compression")
 _ROUTING_MODEL_ENV = ("routing_model", "routing_oracle")
 _EVALUATION_MODEL_ENV = ("evaluation_model", "evaluation")
+_TSCG_ENABLED_ENV = ("tscg_enabled", "tscg")
+_TSCG_MODEL_ENV = ("tscg_model",)
+_TSCG_PROFILE_ENV = ("tscg_profile",)
 
 
 _dotenv_loaded = False
@@ -222,6 +225,9 @@ class Config:
     num_distractors: int = 4
     include_adversarial: bool = True
     use_llm: bool = True
+    tscg_enabled: bool = False
+    tscg_model: str = "claude-sonnet"
+    tscg_profile: str = "balanced"
 
     @classmethod
     def load(cls, path: Path | None = None) -> Config:
@@ -235,6 +241,7 @@ class Config:
                 models = loaded.get("models", {})
                 thresholds = loaded.get("thresholds", {})
                 oracle = loaded.get("oracle", {})
+                tscg = loaded.get("tscg", {})
                 api_base = loaded.get("api_base_url") or loaded.get("base_url")
                 data = {
                     "compression_model": models.get("compression", cls.compression_model),
@@ -265,6 +272,9 @@ class Config:
                     "num_distractors": oracle.get("num_distractors", cls.num_distractors),
                     "include_adversarial": oracle.get("include_adversarial", cls.include_adversarial),
                     "use_llm": loaded.get("use_llm", True),
+                    "tscg_enabled": bool(tscg.get("enabled", cls.tscg_enabled)),
+                    "tscg_model": tscg.get("model", cls.tscg_model),
+                    "tscg_profile": tscg.get("profile", cls.tscg_profile),
                 }
                 break
 
@@ -306,5 +316,17 @@ class Config:
         env_api_version = _env_value(*_API_VERSION_ENV)
         if env_api_version:
             config.api_version = env_api_version
+
+        env_tscg = _env_bool(*_TSCG_ENABLED_ENV)
+        if env_tscg is not None:
+            config.tscg_enabled = env_tscg
+
+        env_tscg_model = _env_value(*_TSCG_MODEL_ENV)
+        if env_tscg_model:
+            config.tscg_model = env_tscg_model
+
+        env_tscg_profile = _env_value(*_TSCG_PROFILE_ENV)
+        if env_tscg_profile:
+            config.tscg_profile = env_tscg_profile
 
         return config

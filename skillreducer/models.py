@@ -71,6 +71,21 @@ class AuditReport:
 
 
 @dataclass
+class TscgStats:
+    """Tool-schema compression metrics (separate from skill TokenStats)."""
+
+    original_tokens: int = 0
+    compressed_tokens: int = 0
+    tool_count: int = 0
+
+    @property
+    def savings(self) -> float:
+        if self.original_tokens <= 0:
+            return 0.0
+        return 1.0 - self.compressed_tokens / self.original_tokens
+
+
+@dataclass
 class ReduceReport:
     source: Path
     output: Path
@@ -79,6 +94,7 @@ class ReduceReport:
     description_changed: bool = False
     files_written: list[str] = field(default_factory=list)
     stage_notes: list[str] = field(default_factory=list)
+    tscg_stats: TscgStats | None = None
 
     @property
     def description_savings(self) -> float:

@@ -31,6 +31,9 @@ skillreducer = "skillreducer.cli:main"
 where = ["."]
 include = ["skillreducer*"]
 
+[tool.setuptools.package-data]
+skillreducer = ["tscg/bridge.mjs", "tscg/package.json", "tscg/README.md"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 

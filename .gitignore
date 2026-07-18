@@ -14,3 +14,4 @@ venv/
 optimized/
 output/
 .DS_Store
+skillreducer/tscg/node_modules/

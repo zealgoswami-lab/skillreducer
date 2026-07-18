@@ -15,6 +15,13 @@ oracle:
   num_distractors: 4
   include_adversarial: true
 
+# Optional tool-schema compression (requires Node >= 18 and:
+#   cd skillreducer/tscg && npm install
+tscg:
+  enabled: false
+  model: claude-sonnet
+  profile: balanced
+
 # Prefer .env (see .env.example). Env vars override these fields.
 # api_key: sk-...
 # api_base_url: https://api.openai.com/v1
