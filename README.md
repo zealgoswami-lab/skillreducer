@@ -237,11 +237,13 @@ ruff check src tests
 
 | Resource | Description |
 |----------|-------------|
-| [CITATION.md](CITATION.md) | BibTeX and APA citation for the paper |
-| [PAPER_DETAIL.md](PAPER_DETAIL.md) | In-depth explanation of the paper |
-| [skill_reducer.pdf](skill_reducer.pdf) | Original paper (local copy) |
+| [docs/PAPERS.md](docs/PAPERS.md) | **Paper index** — SkillReducer + TSCG and how they fit |
+| [PAPER_DETAIL.md](PAPER_DETAIL.md) | SkillReducer paper (Gao et al.) in depth |
+| [docs/TSCG_PAPER_DETAIL.md](docs/TSCG_PAPER_DETAIL.md) | TSCG papers (Sakizli) in depth |
+| [CITATION.md](CITATION.md) | BibTeX / APA for SkillReducer and TSCG |
+| [skill_reducer.pdf](skill_reducer.pdf) | SkillReducer paper (local copy) |
 
-If you use this tool in research, please cite the **SkillReducer paper** (Gao et al., 2026), not this repository alone.
+If you use this tool in research, please cite the **SkillReducer paper** (Gao et al., 2026) for skill debloating, and the **TSCG papers** (Sakizli, 2026) when discussing `--tscg` / schema compression — not this repository alone.
 
 ## License
 

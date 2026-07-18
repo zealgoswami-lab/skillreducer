@@ -6,6 +6,8 @@
 **arXiv:** [2603.29919](https://arxiv.org/abs/2603.29919) (v2, June 2026)  
 **Local copy:** [`skill_reducer.pdf`](skill_reducer.pdf)
 
+> Also using optional tool-schema compression? See [docs/TSCG_PAPER_DETAIL.md](docs/TSCG_PAPER_DETAIL.md) and the index [docs/PAPERS.md](docs/PAPERS.md).
+
 This document explains the paper in depth. **All framework design, algorithms, and empirical results are by Gao, Li, Yuan, Ji, Ma, and Wang (2026).** See [CITATION.md](CITATION.md) for proper attribution.
 
 ---

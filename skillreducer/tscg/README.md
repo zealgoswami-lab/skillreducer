@@ -235,4 +235,7 @@ TSCG (tool schemas)
 
 - Main beginner guide (includes how reduction works): [../../BEGINNER.md](../../BEGINNER.md)
 - Full project README: [../../README.md](../../README.md)
+- **TSCG paper details:** [../../docs/TSCG_PAPER_DETAIL.md](../../docs/TSCG_PAPER_DETAIL.md)
+- All papers index: [../../docs/PAPERS.md](../../docs/PAPERS.md)
+- Citations: [../../CITATION.md](../../CITATION.md)
 - Package: [@tscg/core on npm](https://www.npmjs.com/package/@tscg/core)
