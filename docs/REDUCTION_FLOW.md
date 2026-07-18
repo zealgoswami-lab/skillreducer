@@ -76,6 +76,10 @@ PDFs can be scanned or digital; OCR is sometimes needed...
             "path": {
               "type": "string",
               "description": "Path to the PDF file on disk"
+            },
+            "pages": {
+              "type": "string",
+              "description": "Optional page range, e.g. 1-3"
             }
           },
           "required": ["path"]
@@ -113,8 +117,36 @@ optimized/demo-skill/
 └── mcp_manifest.tscg.json    ← before/after numbers
 ```
 
-**Skill side (idea):** long description → short routing line; examples/background leave the main body.  
-**Tool side (idea):** verbose JSON → compact line like `extract_pdf(path:str!) -> text`.
+**Skill side (idea):** long description → short routing line; examples/background leave the main body.
+
+**Tool side — JSON before → after:**
+
+```text
+BEFORE (tools.json — verbose JSON Schema)
+{
+  "name": "extract_pdf",
+  "description": "Extract text from a PDF file at the given path",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "path":  { "type": "string", "description": "Path to the PDF file on disk" },
+      "pages": { "type": "string", "description": "Optional page range, e.g. 1-3" }
+    },
+    "required": ["path"]
+  }
+}
+
+AFTER (mcp_manifest.tscg.txt — compact)
+extract_pdf(path:str!, pages?:str) -> text
+```
+
+| Symbol | Meaning |
+|--------|---------|
+| `str!` | required string |
+| `pages?:str` | optional string |
+| `-> text` | short return hint |
+
+That one line replaces the whole nested JSON for the model’s tool list (often ~50–70% fewer schema tokens).
 
 ### Report (what to look for)
 

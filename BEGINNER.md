@@ -204,6 +204,76 @@ Compact schema text (mcp_manifest.tscg.txt)
   → fewer tokens when the agent sees the tool list
 ```
 
+### Example: how a JSON file is reduced
+
+**Before — what you provide (`tools.json`):**
+
+```json
+{
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "extract_pdf",
+        "description": "Extract text from a PDF file at the given path",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "description": "Path to the PDF file on disk"
+            },
+            "pages": {
+              "type": "string",
+              "description": "Optional page range, e.g. 1-3"
+            }
+          },
+          "required": ["path"]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "merge_pdfs",
+        "description": "Merge multiple PDF files into one output file",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "inputs": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "List of PDF paths to merge"
+            },
+            "output": {
+              "type": "string",
+              "description": "Destination path for the merged PDF"
+            }
+          },
+          "required": ["inputs", "output"]
+        }
+      }
+    }
+  ]
+}
+```
+
+**After — what TSCG writes (`mcp_manifest.tscg.txt`):**
+
+```text
+extract_pdf(path:str!, pages?:str) -> text
+merge_pdfs(inputs:str[]!, output:str!) -> file
+```
+
+| Piece | Meaning |
+|-------|---------|
+| `path:str!` | required string (`!` = required) |
+| `pages?:str` | optional string |
+| `inputs:str[]!` | required array of strings |
+| `-> text` | short result hint from the description |
+
+Same tools, far fewer tokens: verbose JSON keys (`type`, `function`, `parameters`, `properties`, `description`, …) are dropped; types and required flags stay.
+
 Typical savings on schemas: about **50–70%** (TSCG paper/benchmarks).  
 Skill savings: about **~48% description / ~39% body** (SkillReducer paper) when LLM mode works well.
 
