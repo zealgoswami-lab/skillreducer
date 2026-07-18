@@ -1,5 +1,7 @@
 # skillreducer
 
+> **New here?** Start with the [Beginner guide](BEGINNER.md) (install, first audit/reduce, optional TSCG).
+
 Open-source tool implementing the **SkillReducer** debloating framework for LLM agent skills, based on the research paper:
 
 > **SkillReducer: Optimizing LLM Agent Skills for Token Efficiency**  
