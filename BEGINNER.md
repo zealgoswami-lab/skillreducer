@@ -241,6 +241,8 @@ YOU:  skill folder  +  (optional) MCP JSON you provide
      optimized/<skill-name>/
 ```
 
+Full simple flow + one example: [docs/REDUCTION_FLOW.md](docs/REDUCTION_FLOW.md).
+
 ---
 
 ## Common questions
@@ -274,6 +276,7 @@ Use `--no-llm`, or set `api_key` in `.env`.
 | Full docs | [README.md](README.md) |
 | MCP JSON + TSCG for beginners | [skillreducer/tscg/README.md](skillreducer/tscg/README.md) |
 | **Papers (SkillReducer + TSCG)** | [docs/PAPERS.md](docs/PAPERS.md) |
+| **Flow + one example** | [docs/REDUCTION_FLOW.md](docs/REDUCTION_FLOW.md) |
 | SkillReducer paper detail | [PAPER_DETAIL.md](PAPER_DETAIL.md) |
 | TSCG paper detail | [docs/TSCG_PAPER_DETAIL.md](docs/TSCG_PAPER_DETAIL.md) |
 | Sample skills | [data/README.md](data/README.md) |

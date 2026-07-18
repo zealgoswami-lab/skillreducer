@@ -16,6 +16,9 @@ Skill tokens  →  SkillReducer (Gao et al.)  →  lean SKILL.md
 Tool schemas  →  TSCG (Sakizli)             →  lean mcp_manifest.tscg.*
 ```
 
+Flow diagrams (simple + one example): [REDUCTION_FLOW.md](REDUCTION_FLOW.md)
+
+
 You provide the skill folder. For TSCG you also provide MCP/tools JSON.  
 Neither paper’s compression requires sending your data to a cloud LLM for the TSCG step; SkillReducer Stage 1–2 may call an LLM unless you use `--no-llm`.
 
@@ -28,4 +31,5 @@ Neither paper’s compression requires sending your data to a cloud LLM for the 
 | TSCG RAG companion | https://arxiv.org/abs/2605.26165 |
 | Citations / BibTeX | [CITATION.md](../CITATION.md) |
 | Beginner usage | [BEGINNER.md](../BEGINNER.md) |
+| Flow + one example | [REDUCTION_FLOW.md](REDUCTION_FLOW.md) |
 | TSCG setup | [skillreducer/tscg/README.md](../skillreducer/tscg/README.md) |

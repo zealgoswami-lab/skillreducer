@@ -238,6 +238,7 @@ ruff check src tests
 | Resource | Description |
 |----------|-------------|
 | [docs/PAPERS.md](docs/PAPERS.md) | **Paper index** — SkillReducer + TSCG and how they fit |
+| [docs/REDUCTION_FLOW.md](docs/REDUCTION_FLOW.md) | **Simple flow + one example** (skill + optional MCP JSON) |
 | [PAPER_DETAIL.md](PAPER_DETAIL.md) | SkillReducer paper (Gao et al.) in depth |
 | [docs/TSCG_PAPER_DETAIL.md](docs/TSCG_PAPER_DETAIL.md) | TSCG papers (Sakizli) in depth |
 | [CITATION.md](CITATION.md) | BibTeX / APA for SkillReducer and TSCG |
