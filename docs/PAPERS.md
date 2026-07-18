@@ -6,7 +6,7 @@ Design and results belong to the paper authors — cite them, not only this GitH
 | Paper | What it covers | In this repo | Detail doc |
 |-------|----------------|--------------|------------|
 | **SkillReducer** | Compress skill descriptions + bodies | Stages 1–2 (+ optional Stage 3) | [PAPER_DETAIL.md](../PAPER_DETAIL.md) |
-| **TSCG** | Compress MCP / tool JSON schemas | Optional `--tscg` via `@tscg/core` | [TSCG_PAPER_DETAIL.md](TSCG_PAPER_DETAIL.md) |
+| **TSCG** *(separate paper)* | Compress MCP / tool JSON schemas | Optional `--tscg` via `@tscg/core` | [TSCG_PAPER_DETAIL.md](TSCG_PAPER_DETAIL.md) · also [PAPER_DETAIL.md §20](../PAPER_DETAIL.md#20-another-paper-tscg-tool-schema-compression) |
 | **TSCG + Agentic RAG** | Why schema compression unlocks tight context budgets | Motivation for tool-schema step | [TSCG_PAPER_DETAIL.md](TSCG_PAPER_DETAIL.md#companion-paper-agentic-rag) |
 
 **How they fit together**

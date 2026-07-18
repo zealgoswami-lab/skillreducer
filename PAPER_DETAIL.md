@@ -6,9 +6,10 @@
 **arXiv:** [2603.29919](https://arxiv.org/abs/2603.29919) (v2, June 2026)  
 **Local copy:** [`skill_reducer.pdf`](skill_reducer.pdf)
 
-> Also using optional tool-schema compression? See [docs/TSCG_PAPER_DETAIL.md](docs/TSCG_PAPER_DETAIL.md) and the index [docs/PAPERS.md](docs/PAPERS.md).
+> **Two papers, two jobs.** Sections 1–19 explain the **SkillReducer** paper (Gao et al.) — skill `SKILL.md` tokens.  
+> Tool / MCP JSON schema compression comes from a **different paper** (**TSCG**, Sakizli) — see [§20](#20-another-paper-tscg-tool-schema-compression) below, full write-up [docs/TSCG_PAPER_DETAIL.md](docs/TSCG_PAPER_DETAIL.md), and index [docs/PAPERS.md](docs/PAPERS.md).
 
-This document explains the paper in depth. **All framework design, algorithms, and empirical results are by Gao, Li, Yuan, Ji, Ma, and Wang (2026).** See [CITATION.md](CITATION.md) for proper attribution.
+This document explains the SkillReducer paper in depth. **All SkillReducer framework design, algorithms, and empirical results are by Gao, Li, Yuan, Ji, Ma, and Wang (2026).** See [CITATION.md](CITATION.md) for proper attribution.
 
 ---
 
@@ -33,6 +34,7 @@ This document explains the paper in depth. **All framework design, algorithms, a
 17. [Implications for skill authors](#17-implications-for-skill-authors)
 18. [How this repository implements the paper](#18-how-this-repository-implements-the-paper)
 19. [Glossary](#19-glossary)
+20. [Another paper: TSCG (tool-schema compression)](#20-another-paper-tscg-tool-schema-compression)
 
 ---
 
@@ -696,6 +698,8 @@ skill-name/
 
 **Platform scope:** Works on any skill directory using the standard `SKILL.md` + YAML frontmatter convention (Claude Code, Windsurf, SkillHub, GitHub community skills, and similar agent platforms).
 
+**Optional second paper (not SkillReducer):** Tool / MCP JSON schema compression is **not** from Gao et al. It is wired in separately via `--tscg` — see [§20](#20-another-paper-tscg-tool-schema-compression).
+
 ---
 
 ## 19. Glossary
@@ -719,6 +723,105 @@ skill-name/
 
 ---
 
+## 20. Another paper: TSCG (tool-schema compression)
+
+> **Important:** TSCG is **not** part of the SkillReducer paper (Gao et al.).  
+> It is a **separate research paper** by **Furkan Sakizli**. This repo *optionally calls* Sakizli’s `@tscg/core` after skill reduction so you can cut **tool JSON** tokens as well as skill markdown tokens.
+
+| | SkillReducer (this doc, §§1–19) | TSCG (this section) |
+|--|--------------------------------|---------------------|
+| **Paper** | Gao et al., arXiv [2603.29919](https://arxiv.org/abs/2603.29919) | Sakizli, arXiv [2605.04107](https://arxiv.org/abs/2605.04107) |
+| **What shrinks** | Skill `description` + `SKILL.md` body | MCP / function-calling **tool schemas** (JSON) |
+| **In this repo** | Always (Stages 1–2, optional Stage 3) | Only with `--tscg` + **your** tools JSON |
+| **Full detail** | This file | [docs/TSCG_PAPER_DETAIL.md](docs/TSCG_PAPER_DETAIL.md) |
+
+Companion paper (same author): *Tool-Schema Compression Enables Agentic RAG Under Constrained Context Budgets* — [2605.26165](https://arxiv.org/abs/2605.26165).
+
+### Beginner picture: two token budgets
+
+```text
+YOU PROVIDE
+  1) Skill folder (SKILL.md)     → SkillReducer paper (Gao et al.)
+  2) MCP tools JSON (optional)   → TSCG paper (Sakizli)   ← another paper
+
+skillreducer reduce ./my-skill --tscg --tools tools.json
+        │
+        ├─► A) SkillReducer → lean SKILL.md (+ refs)
+        └─► B) TSCG         → mcp_manifest.tscg.txt (compact schemas)
+```
+
+Skills and tools burn **different** context. SkillReducer alone never invents or compresses your MCP tools — you must supply the JSON.
+
+### What the TSCG paper is about
+
+Agent frameworks inject **tool definitions as verbose JSON** every turn (`name`, `description`, nested `parameters` / JSON Schema). That “MCP tax” can cost thousands of tokens and crowd out the user task (especially with many tools or small context windows).
+
+**TSCG** is a **deterministic schema compiler** (not an LLM rewrite):
+
+- Input: OpenAI- or MCP-style tool JSON  
+- Output: compact structured text (fewer tokens)  
+- No model API call for the compile step; runs locally via Node (`@tscg/core`)  
+- Typical savings often **~50–72%** on schemas (paper; formal ≥51% on well-formed schemas)
+
+**Before → after (idea):**
+
+```text
+BEFORE (verbose JSON you provide)
+{
+  "type": "function",
+  "function": {
+    "name": "get_weather",
+    "description": "Get the current weather for a location",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "location": { "type": "string", "description": "City name" }
+      },
+      "required": ["location"]
+    }
+  }
+}
+
+AFTER (TSCG compact text)
+get_weather(location:str!) -> weather data
+```
+
+More worked JSON examples: [BEGINNER.md](BEGINNER.md) · [docs/REDUCTION_FLOW.md](docs/REDUCTION_FLOW.md).
+
+### How this repository implements TSCG (beginner)
+
+Same spirit as [§18](#18-how-this-repository-implements-the-paper), but for the **other** paper:
+
+| TSCG idea | How this repo does it |
+|-----------|------------------------|
+| You supply tool schemas | `--tools tools.json` or `mcp_manifest.json` in the skill folder |
+| Normalize OpenAI / MCP shapes | `skillreducer/tscg/manifest.py` |
+| Call the TSCG compiler | Node bridge `skillreducer/tscg/bridge.mjs` → `@tscg/core` |
+| Python entrypoint | `skillreducer/tscg/compress.py` (`compress_tools`) |
+| Pipeline flag | `skillreducer reduce … --tscg` (config: `tscg.enabled`) |
+| Outputs | `mcp_manifest.json`, `mcp_manifest.tscg.txt`, `mcp_manifest.tscg.json` (metrics) |
+
+**Setup (once):**
+
+```bash
+cd skillreducer/tscg && npm install && cd ../..
+```
+
+**Run both papers’ reductions:**
+
+```bash
+skillreducer reduce ./my-skill --tscg --tools tools.json
+```
+
+Without tools JSON, `--tscg` is skipped (`TSCG skipped: no tools`). Skill reduction still runs.
+
+**Privacy:** compiling schemas is local stdin/stdout after `npm install`. It does not upload your MCP JSON to a remote LLM. SkillReducer Stage 1–2 may still call an API unless you use `--no-llm`.
+
+Beginner walkthrough: [skillreducer/tscg/README.md](skillreducer/tscg/README.md) · [BEGINNER.md](BEGINNER.md).  
+Citations / BibTeX: [CITATION.md](CITATION.md). Papers index: [docs/PAPERS.md](docs/PAPERS.md).
+
+---
+
 ## References (from paper)
 
 - Anthropic Claude Code docs
@@ -730,7 +833,9 @@ skill-name/
 - Li et al. — SkillsBench (arXiv 2602.12670)
 - Liu et al. — Lost in the Middle (TACL 2024)
 - Shi et al. — Distracted by Irrelevant Context (ICML 2023)
+- Sakizli — TSCG (arXiv 2605.04107); companion Agentic RAG (arXiv 2605.26165) — **separate papers**; see [§20](#20-another-paper-tscg-tool-schema-compression)
 
 ---
 
-*For the full academic treatment, equations, and appendices, see [`skill_reducer.pdf`](skill_reducer.pdf).*
+*For the full academic treatment, equations, and appendices, see [`skill_reducer.pdf`](skill_reducer.pdf).*  
+*For the separate TSCG papers, see [docs/TSCG_PAPER_DETAIL.md](docs/TSCG_PAPER_DETAIL.md).*

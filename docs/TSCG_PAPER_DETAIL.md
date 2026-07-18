@@ -12,7 +12,8 @@ This document summarizes the papers for SkillReducer users.
 **All TSCG algorithms, operators, and empirical results are by Furkan Sakizli (2026).**  
 This repository only *calls* `@tscg/core` after SkillReducer; it is not the TSCG research project.
 
-See [CITATION.md](../CITATION.md) for BibTeX and [PAPERS.md](PAPERS.md) for how SkillReducer + TSCG fit together.
+See [CITATION.md](../CITATION.md) for BibTeX and [PAPERS.md](PAPERS.md) for how SkillReducer + TSCG fit together.  
+Beginner-style summary also lives in [PAPER_DETAIL.md §20](../PAPER_DETAIL.md#20-another-paper-tscg-tool-schema-compression) (clearly marked as **another paper**, not Gao et al.).
 
 ---
 
