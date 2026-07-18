@@ -1,0 +1,12 @@
+{
+  "name": "skillreducer-tscg-bridge",
+  "private": true,
+  "type": "module",
+  "description": "Optional Node bridge for SkillReducer TSCG integration",
+  "dependencies": {
+    "@tscg/core": "^1.4.3"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

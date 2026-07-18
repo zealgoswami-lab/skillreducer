@@ -140,6 +140,8 @@ class SkillReducerAgent:
         *,
         stage: int | None = None,
         dry_run: bool = False,
+        tscg: bool | None = None,
+        tools_path: Path | None = None,
     ) -> SkillOptimizationResult:
         skill_folder = Path(skill_folder).resolve()
         if not resolve_skill_md(skill_folder).exists():
@@ -157,6 +159,8 @@ class SkillReducerAgent:
             dry_run=dry_run,
             llm=self._stage2_llm,
             stage1_agent=self._stage1,
+            tscg=tscg,
+            tools_path=tools_path,
         )
 
         out_skill_dir = report.output

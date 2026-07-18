@@ -1,5 +1,7 @@
 # skillreducer
 
+> **New here?** Start with the [Beginner guide](BEGINNER.md) (install, first audit/reduce, optional TSCG).
+
 Open-source tool implementing the **SkillReducer** debloating framework for LLM agent skills, based on the research paper:
 
 > **SkillReducer: Optimizing LLM Agent Skills for Token Efficiency**  
@@ -86,6 +88,10 @@ Reduce a skill (writes to `optimized/` by default):
 ```bash
 skillreducer reduce path/to/my-skill
 skillreducer reduce path/to/my-skill --output ./optimized --dry-run
+
+# Optional: compress MCP / tool schemas with TSCG (needs Node >= 18)
+#   cd skillreducer/tscg && npm install
+skillreducer reduce path/to/my-skill --tscg --tools tools.json
 ```
 
 Batch mode across a skill library:
@@ -111,6 +117,8 @@ Credentials and model ids are read from `.env` (auto-loaded on startup) or the e
 | **Compression model** (Stage 2, general LLM) | `compression_model` | `compression` |
 | **Routing model** (Stage 1 oracle) | `routing_model` | `routing_oracle` |
 | **Evaluation model** (Gate 2, planned) | `evaluation_model` | `evaluation` |
+| **TSCG enabled** | `tscg_enabled` | `tscg.enabled` |
+| **TSCG model / profile** | `tscg_model` / `tscg_profile` | `tscg.model` / `tscg.profile` |
 
 ```bash
 # .env (recommended)
@@ -186,10 +194,22 @@ After optimization, reference files include routing metadata (`when`, `topics`) 
 | `skillreducer audit <path>` | Token report + F1/F2/F3 issue flags |
 | `skillreducer reduce <path>` | Run Stage 1 + Stage 2 optimization (OpenAI client) |
 | `skillreducer agent <path>` | Same pipeline via Agno agent (skill folder → updated files) |
-| `--stage 1` / `--stage 2` | Run a single stage |
+| `--stage 1` / `--stage 2` / `--stage 3` | Run a single stage |
+| `--tscg` / `--tools <json>` | Compress tool schemas with TSCG after reduce |
 | `--recursive` | Process all skills under a directory |
 | `--dry-run` | Report savings without writing files |
 | `--no-llm` | Heuristic mode (no API calls) |
+
+### Optional TSCG (tool schemas)
+
+After SkillReducer cuts skill tokens, TSCG can compress MCP/tool JSON schemas ([@tscg/core](https://www.npmjs.com/package/@tscg/core)):
+
+```bash
+cd skillreducer/tscg && npm install   # once; needs Node >= 18
+skillreducer reduce ./my-skill --tscg --tools tools.json
+```
+
+Writes `mcp_manifest.json`, `mcp_manifest.tscg.txt`, and `mcp_manifest.tscg.json` into the optimized skill folder. See [skillreducer/tscg/README.md](skillreducer/tscg/README.md).
 
 ## Issue codes (audit)
 
