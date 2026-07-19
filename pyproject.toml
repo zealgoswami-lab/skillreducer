@@ -23,19 +23,32 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "ruff>=0.6"]
 build = ["pyinstaller>=6.0"]
+# SkillRevise Python package is vendored under src/skillrevise (no git install).
+# Optional extras for SkillRevise analysis helpers only:
+revise-analysis = ["matplotlib>=3.7", "numpy>=1.24"]
 
 [project.scripts]
 skillreducer = "skillreducer.cli:main"
+skillrevise = "skillrevise.cli:main"
+skillrevise-llm = "skillrevise.llm.command:main"
+skillrevise-convert-skillsbench = "skillrevise.benchmarks.convert_skillsbench:main"
 
 [tool.setuptools.packages.find]
-where = ["."]
-include = ["skillreducer*"]
+where = [".", "src"]
+include = ["skillreducer*", "skillrevise*"]
 
 [tool.setuptools.package-data]
-skillreducer = ["tscg/bridge.mjs", "tscg/package.json", "tscg/README.md"]
+skillreducer = [
+    "tscg/bridge.mjs",
+    "tscg/package.json",
+    "tscg/README.md",
+    "revise/README.md",
+]
+skillrevise = ["LICENSE", "VENDOR.md"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = [".", "src"]
 
 [tool.ruff]
 line-length = 100

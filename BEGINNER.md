@@ -204,6 +204,76 @@ Compact schema text (mcp_manifest.tscg.txt)
   → fewer tokens when the agent sees the tool list
 ```
 
+### Example: how a JSON file is reduced
+
+**Before — what you provide (`tools.json`):**
+
+```json
+{
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "extract_pdf",
+        "description": "Extract text from a PDF file at the given path",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "description": "Path to the PDF file on disk"
+            },
+            "pages": {
+              "type": "string",
+              "description": "Optional page range, e.g. 1-3"
+            }
+          },
+          "required": ["path"]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "merge_pdfs",
+        "description": "Merge multiple PDF files into one output file",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "inputs": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "List of PDF paths to merge"
+            },
+            "output": {
+              "type": "string",
+              "description": "Destination path for the merged PDF"
+            }
+          },
+          "required": ["inputs", "output"]
+        }
+      }
+    }
+  ]
+}
+```
+
+**After — what TSCG writes (`mcp_manifest.tscg.txt`):**
+
+```text
+extract_pdf(path:str!, pages?:str) -> text
+merge_pdfs(inputs:str[]!, output:str!) -> file
+```
+
+| Piece | Meaning |
+|-------|---------|
+| `path:str!` | required string (`!` = required) |
+| `pages?:str` | optional string |
+| `inputs:str[]!` | required array of strings |
+| `-> text` | short result hint from the description |
+
+Same tools, far fewer tokens: verbose JSON keys (`type`, `function`, `parameters`, `properties`, `description`, …) are dropped; types and required flags stay.
+
 Typical savings on schemas: about **50–70%** (TSCG paper/benchmarks).  
 Skill savings: about **~48% description / ~39% body** (SkillReducer paper) when LLM mode works well.
 
@@ -218,8 +288,17 @@ Full beginner steps for tools: [`skillreducer/tscg/README.md`](skillreducer/tscg
 | `audit` | Count skill tokens and flag common problems |
 | `reduce` | Write a smaller skill into `optimized/` |
 | `reduce --tscg --tools …` | Same + compress **your** MCP JSON schemas |
+| `revise …` | **Optional** SkillRevise (separate paper) — does **not** change reduce |
 
 **Important:** originals are not overwritten. Output goes to `optimized/` by default.
+
+Optional quality pass (vendored under `src/skillrevise/`):
+
+```bash
+skillreducer revise --skillrevise-help
+```
+
+Details: [`skillreducer/revise/README.md`](skillreducer/revise/README.md).
 
 ---
 
@@ -240,6 +319,8 @@ YOU:  skill folder  +  (optional) MCP JSON you provide
               ▼
      optimized/<skill-name>/
 ```
+
+Full simple flow + one example: [docs/REDUCTION_FLOW.md](docs/REDUCTION_FLOW.md).
 
 ---
 
@@ -273,8 +354,12 @@ Use `--no-llm`, or set `api_key` in `.env`.
 |------|---------|
 | Full docs | [README.md](README.md) |
 | MCP JSON + TSCG for beginners | [skillreducer/tscg/README.md](skillreducer/tscg/README.md) |
+| **Papers (SkillReducer + TSCG)** | [docs/PAPERS.md](docs/PAPERS.md) |
+| **Flow + one example** | [docs/REDUCTION_FLOW.md](docs/REDUCTION_FLOW.md) |
+| SkillReducer paper detail | [PAPER_DETAIL.md](PAPER_DETAIL.md) |
+| TSCG paper detail | [docs/TSCG_PAPER_DETAIL.md](docs/TSCG_PAPER_DETAIL.md) |
 | Sample skills | [data/README.md](data/README.md) |
-| Paper details | [PAPER_DETAIL.md](PAPER_DETAIL.md) |
+| Citations | [CITATION.md](CITATION.md) |
 
 ---
 

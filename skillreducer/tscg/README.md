@@ -55,6 +55,8 @@ skillreducer reduce ./my-skill --tscg --tools tools.json
 
 ### B) Tool-schema reduction (TSCG) — needs your JSON
 
+**Example 1 — one simple tool**
+
 ```text
 BEFORE (what you provide — verbose):
 {
@@ -77,6 +79,26 @@ BEFORE (what you provide — verbose):
 AFTER (TSCG output — compact, fewer tokens):
 get_weather(location:str!) -> weather data
 ```
+
+**Example 2 — two tools with optional + array params**
+
+```text
+BEFORE (tools.json excerpt):
+extract_pdf  → path (required string), pages (optional string)
+merge_pdfs   → inputs (required string[]), output (required string)
+
+AFTER (mcp_manifest.tscg.txt):
+extract_pdf(path:str!, pages?:str) -> text
+merge_pdfs(inputs:str[]!, output:str!) -> file
+```
+
+| Compact piece | Meaning |
+|---------------|---------|
+| `name(...)` | tool name |
+| `param:str!` | required string |
+| `param?:str` | optional string |
+| `param:str[]!` | required array of strings |
+| `-> …` | short result hint |
 
 Typical schema savings: about **50–70%**. Exact number is printed in the reduce report and in `mcp_manifest.tscg.json`.
 
@@ -235,4 +257,8 @@ TSCG (tool schemas)
 
 - Main beginner guide (includes how reduction works): [../../BEGINNER.md](../../BEGINNER.md)
 - Full project README: [../../README.md](../../README.md)
+- **TSCG paper details:** [../../docs/TSCG_PAPER_DETAIL.md](../../docs/TSCG_PAPER_DETAIL.md)
+- **Flow diagrams:** [../../docs/REDUCTION_FLOW.md](../../docs/REDUCTION_FLOW.md)
+- All papers index: [../../docs/PAPERS.md](../../docs/PAPERS.md)
+- Citations: [../../CITATION.md](../../CITATION.md)
 - Package: [@tscg/core on npm](https://www.npmjs.com/package/@tscg/core)
