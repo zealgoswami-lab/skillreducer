@@ -130,7 +130,7 @@ Full write-up: [docs/TSCG_PAPER_DETAIL.md](docs/TSCG_PAPER_DETAIL.md)
 | SkillsBench revision results in that paper | Liu et al. (2026) |
 | This repo’s `skillreducer revise` CLI forwarding | Optional: this GitHub repository |
 
-Wrapper docs: [skillreducer/revise/README.md](skillreducer/revise/README.md)
+Wrapper docs: [skillreducer/revise/README.md](skillreducer/revise/README.md) · Detail: [PAPER_DETAIL.md §21](PAPER_DETAIL.md#21-skillrevise--trace-conditioned-skill-revision)
 
 ---
 

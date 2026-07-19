@@ -1,19 +1,72 @@
-# SkillReducer Paper — Detailed Explanation
+# Papers — Detailed Explanation
 
-**Paper:** SkillReducer: Optimizing LLM Agent Skills for Token Efficiency  
-**Authors:** Yudong Gao, Zongjie Li, Yuanyuan Yuan, Zimo Ji, Pingchuan Ma, Shuai Wang  
-**Affiliations:** HKUST, Tsinghua University, Zhejiang University of Technology  
-**arXiv:** [2603.29919](https://arxiv.org/abs/2603.29919) (v2, June 2026)  
-**Local copy:** [`skill_reducer.pdf`](skill_reducer.pdf)
+This document explains the **three research papers** integrated in this repository: skill token debloating, tool-schema compression, and execution-grounded skill revision.
 
-> **Two papers, two jobs.** Sections 1–19 explain the **SkillReducer** paper (Gao et al.) — skill `SKILL.md` tokens.  
-> Tool / MCP JSON schema compression comes from a **different paper** (**TSCG**, Sakizli) — see [§20](#20-another-paper-tscg-tool-schema-compression) below, full write-up [docs/TSCG_PAPER_DETAIL.md](docs/TSCG_PAPER_DETAIL.md), and index [docs/PAPERS.md](docs/PAPERS.md).
+| # | Paper | arXiv | What it optimizes | CLI in this repo |
+|---|--------|-------|-------------------|------------------|
+| 1 | **SkillReducer** (Gao et al.) | [2603.29919](https://arxiv.org/abs/2603.29919) · [PDF](skill_reducer.pdf) | Skill `description` + body tokens | `reduce` / `agent` (Stages 1–3) |
+| 2 | **TSCG** (Sakizli) | [2605.04107](https://arxiv.org/abs/2605.04107) · companion [2605.26165](https://arxiv.org/abs/2605.26165) | MCP / tool JSON schema tokens | `reduce … --tscg` |
+| 3 | **SkillRevise** (Liu et al.) | [2606.01139](https://arxiv.org/abs/2606.01139) | Skill **quality** from traces | `revise` *(separate command)* |
 
-This document explains the SkillReducer paper in depth. **All SkillReducer framework design, algorithms, and empirical results are by Gao, Li, Yuan, Ji, Ma, and Wang (2026).** See [CITATION.md](CITATION.md) for proper attribution.
+**Citations:** [CITATION.md](CITATION.md) · **Index:** [docs/PAPERS.md](docs/PAPERS.md) · **Beginner:** [BEGINNER.md](BEGINNER.md)
+
+> **Attribution.** Algorithm design and empirical results belong to each paper’s authors. This repo is an independent implementation / integration — not affiliated with the authors unless stated otherwise.
+
+---
+
+## How the three papers fit together
+
+Skills, tools, and quality are **different problems**. Compressing markdown does not shrink MCP schemas; compressing schemas does not fix wrong instructions; revising from traces does not by itself minimize tokens.
+
+```mermaid
+flowchart TB
+    subgraph inputs [What you provide]
+        SkillFolder[Skill folder SKILL.md]
+        ToolsJson[tools.json optional]
+        TasksJson[tasks.json optional]
+    end
+
+    subgraph paper1 [Paper 1 SkillReducer]
+        S1[Stage 1 routing description]
+        S2[Stage 2 body disclosure]
+        S3[Stage 3 script extraction]
+        S1 --> S2 --> S3
+    end
+
+    subgraph paper2 [Paper 2 TSCG]
+        TSCG[Deterministic schema compiler]
+    end
+
+    subgraph paper3 [Paper 3 SkillRevise]
+        Revise[Execute diagnose revise loop]
+    end
+
+    SkillFolder --> S1
+    S3 --> LeanSkill[Lean SKILL.md plus refs plus scripts]
+    ToolsJson --> TSCG
+    TSCG --> LeanSchemas[mcp_manifest.tscg.*]
+    TasksJson --> Revise
+    SkillFolder --> Revise
+    Revise --> BetterSkill[Higher-quality skill from traces]
+```
+
+```text
+Optional quality   →  SkillRevise (Liu et al.)     →  skillreducer revise …
+Skill text tokens  →  SkillReducer (Gao et al.)    →  lean SKILL.md + refs + scripts/
+Tool schemas       →  TSCG (Sakizli)               →  lean mcp_manifest.tscg.*
+```
+
+| Concern | Paper | Does | Does not |
+|---------|--------|------|----------|
+| Token cost of `SKILL.md` | SkillReducer | Compress routing + body; extract scripts | Fix incorrect behavior |
+| Token cost of tool JSON | TSCG | Compile verbose schemas to compact text | Edit skill markdown |
+| Skill behavior quality | SkillRevise | Diagnose failures from execution traces and revise | Replace `reduce` / Stages 1–3 |
 
 ---
 
 ## Table of contents
+
+### Paper 1 — SkillReducer (Gao et al.)
 
 1. [Executive summary](#1-executive-summary)
 2. [Why skills exist — and why they bloat](#2-why-skills-exist--and-why-they-bloat)
@@ -32,9 +85,37 @@ This document explains the SkillReducer paper in depth. **All SkillReducer frame
 15. [Threats to validity](#15-threats-to-validity)
 16. [Related work](#16-related-work)
 17. [Implications for skill authors](#17-implications-for-skill-authors)
-18. [How this repository implements the paper](#18-how-this-repository-implements-the-paper)
+18. [How this repository implements SkillReducer](#18-how-this-repository-implements-the-paper)
 19. [Glossary](#19-glossary)
-20. [Another paper: TSCG (tool-schema compression)](#20-another-paper-tscg-tool-schema-compression)
+
+### Papers 2 & 3 — TSCG and SkillRevise
+
+20. [TSCG — tool-schema compression](#20-tscg--tool-schema-compression)
+21. [SkillRevise — trace-conditioned skill revision](#21-skillrevise--trace-conditioned-skill-revision)
+
+---
+
+# Paper 1: SkillReducer
+
+**Title:** SkillReducer: Optimizing LLM Agent Skills for Token Efficiency  
+**Authors:** Yudong Gao, Zongjie Li, Yuanyuan Yuan, Zimo Ji, Pingchuan Ma, Shuai Wang  
+**Affiliations:** HKUST, Tsinghua University, Zhejiang University of Technology  
+**arXiv:** [2603.29919](https://arxiv.org/abs/2603.29919) (v2, June 2026)  
+**Local copy:** [`skill_reducer.pdf`](skill_reducer.pdf)
+
+**All SkillReducer framework design, algorithms, and empirical results in §§1–19 are by Gao, Li, Yuan, Ji, Ma, and Wang (2026).**
+
+### SkillReducer end-to-end flow (this repo)
+
+```mermaid
+flowchart TD
+    In[Input skill folder] --> Audit[Optional audit F1 F2 F3]
+    Audit --> Stage1[Stage 1: compress or generate description]
+    Stage1 --> Stage2[Stage 2: classify body + progressive disclosure]
+    Stage2 --> Stage3[Stage 3: selective Python or bash into scripts]
+    Stage3 --> Out[optimized/skill/: SKILL.md + refs + scripts/]
+    Out --> OptTSCG[Optional --tscg on tools.json]
+```
 
 ---
 
@@ -52,10 +133,11 @@ The authors crawled **55,315 public skills** and found systemic waste:
 | **Body** | Non-actionable content loaded every invocation | Only 38.5% is core rules |
 | **References** | Full files injected regardless of task | Up to 1.67M tokens across 100 curated skills |
 
-**SkillReducer** is a two-stage **debloating** framework (analogous to software debloating):
+**SkillReducer** is a **debloating** framework (analogous to software debloating):
 
 - **Stage 1** compresses or generates routing descriptions using **delta debugging** with a simulated routing oracle.
 - **Stage 2** classifies body content into a taxonomy, keeps **core rules** always loaded, and moves examples/background/templates into **on-demand reference modules** (progressive disclosure).
+- **Stage 3** *(this repository’s extension)* selectively extracts runnable **Python** / **bash** fences into `scripts/` so large code blocks leave the always-loaded markdown context.
 
 **Results on 600 skills + SkillsBench:**
 
@@ -691,14 +773,18 @@ skill-name/
 | Reference when/topics metadata | ✅ `stage2/disclose.py` |
 | Gate 1 faithfulness | 🔲 Planned |
 | Gate 2 task eval + feedback | 🔲 Planned (`--strict`) |
-| Adversarial distractor skills | 🔲 Planned |
-| TF-IDF distractor pool | 🔲 Planned |
+| Stage 3 selective script extraction | ✅ `stage3/` (Python + bash/sh; LLM review per block) |
+| Adversarial distractor skills | ✅ `stage1/oracle.py` (LLM; skipped with `--no-llm`) |
+| TF-IDF distractor pool | ✅ `stage1/oracle.py` |
 
 **Heuristic fallback (`--no-llm`):** Rule-based segmentation, classification, and compression when no API key is set — useful for offline audit and basic reduction.
 
 **Platform scope:** Works on any skill directory using the standard `SKILL.md` + YAML frontmatter convention (Claude Code, Windsurf, SkillHub, GitHub community skills, and similar agent platforms).
 
-**Optional second paper (not SkillReducer):** Tool / MCP JSON schema compression is **not** from Gao et al. It is wired in separately via `--tscg` — see [§20](#20-another-paper-tscg-tool-schema-compression).
+**Related papers in this repo (not Gao et al.):**
+
+- Tool / MCP schema compression → **TSCG** — [§20](#20-tscg--tool-schema-compression)
+- Trace-conditioned skill quality → **SkillRevise** — [§21](#21-skillrevise--trace-conditioned-skill-revision)
 
 ---
 
@@ -720,53 +806,69 @@ skill-name/
 | **Gate 1** | Faithfulness check — concepts preserved across compression |
 | **Gate 2** | Task-based functional evaluation |
 | **Promotion** | Moving failed reference content back into always-loaded core |
+| **TSCG** | Deterministic tool-schema compiler (Sakizli) — separate paper |
+| **SkillRevise** | Trace-conditioned skill revision (Liu et al.) — separate paper |
+| **MCP tax** | Context cost of injecting verbose tool JSON every turn |
 
 ---
 
-## 20. Another paper: TSCG (tool-schema compression)
+# Paper 2: TSCG
+
+## 20. TSCG — tool-schema compression
 
 > **Important:** TSCG is **not** part of the SkillReducer paper (Gao et al.).  
 > It is a **separate research paper** by **Furkan Sakizli**. This repo *optionally calls* Sakizli’s `@tscg/core` after skill reduction so you can cut **tool JSON** tokens as well as skill markdown tokens.
 
-| | SkillReducer (this doc, §§1–19) | TSCG (this section) |
-|--|--------------------------------|---------------------|
-| **Paper** | Gao et al., arXiv [2603.29919](https://arxiv.org/abs/2603.29919) | Sakizli, arXiv [2605.04107](https://arxiv.org/abs/2605.04107) |
-| **What shrinks** | Skill `description` + `SKILL.md` body | MCP / function-calling **tool schemas** (JSON) |
-| **In this repo** | Always (Stages 1–2, optional Stage 3) | Only with `--tscg` + **your** tools JSON |
-| **Full detail** | This file | [docs/TSCG_PAPER_DETAIL.md](docs/TSCG_PAPER_DETAIL.md) |
+| | SkillReducer (§§1–19) | TSCG (this section) |
+|--|------------------------|---------------------|
+| **Paper** | Gao et al., [2603.29919](https://arxiv.org/abs/2603.29919) | Sakizli, [2605.04107](https://arxiv.org/abs/2605.04107) |
+| **Companion** | — | Agentic RAG under tight budgets: [2605.26165](https://arxiv.org/abs/2605.26165) |
+| **What shrinks** | Skill `description` + `SKILL.md` body (+ scripts/) | MCP / function-calling **tool schemas** (JSON) |
+| **Method** | Structure-aware LLM + DDMIN debloating | Deterministic **compiler** (no remote LLM for compile) |
+| **In this repo** | `reduce` / `agent` Stages 1–3 | Only with `--tscg` + **your** tools JSON |
+| **Full detail** | This file §§1–19 | [docs/TSCG_PAPER_DETAIL.md](docs/TSCG_PAPER_DETAIL.md) · [@tscg/core](https://www.npmjs.com/package/@tscg/core) · [SKZL-AI/tscg](https://github.com/SKZL-AI/tscg) |
 
-Companion paper (same author): *Tool-Schema Compression Enables Agentic RAG Under Constrained Context Budgets* — [2605.26165](https://arxiv.org/abs/2605.26165).
+### Problem: the “MCP tax”
 
-### Beginner picture: two token budgets
+Agent frameworks inject **tool definitions as verbose JSON** every turn (`name`, `description`, nested `parameters` / JSON Schema). With many tools or small context windows, schemas crowd out the user task. The companion RAG paper shows a **binary** failure mode at tight budgets (e.g. 8K): verbose JSON can overflow so RAG accuracy collapses; compressed schemas restore usability.
 
-```text
-YOU PROVIDE
-  1) Skill folder (SKILL.md)     → SkillReducer paper (Gao et al.)
-  2) MCP tools JSON (optional)   → TSCG paper (Sakizli)   ← another paper
+### Solution
 
-skillreducer reduce ./my-skill --tscg --tools tools.json
-        │
-        ├─► A) SkillReducer → lean SKILL.md (+ refs)
-        └─► B) TSCG         → mcp_manifest.tscg.txt (compact schemas)
-```
-
-Skills and tools burn **different** context. SkillReducer alone never invents or compresses your MCP tools — you must supply the JSON.
-
-### What the TSCG paper is about
-
-Agent frameworks inject **tool definitions as verbose JSON** every turn (`name`, `description`, nested `parameters` / JSON Schema). That “MCP tax” can cost thousands of tokens and crowd out the user task (especially with many tools or small context windows).
-
-**TSCG** is a **deterministic schema compiler** (not an LLM rewrite):
+**TSCG** is a **deterministic schema compiler** at the API boundary:
 
 - Input: OpenAI- or MCP-style tool JSON  
 - Output: compact structured text (fewer tokens)  
 - No model API call for the compile step; runs locally via Node (`@tscg/core`)  
-- Typical savings often **~50–72%** on schemas (paper; formal ≥51% on well-formed schemas)
+- Formal claim: **≥ 51%** savings on well-formed schemas; practical range often **~50–72%**  
+- Profiles: `conservative` / `balanced` (repo default) / `aggressive`
 
-**Before → after (idea):**
+### Flow diagram
+
+```mermaid
+flowchart LR
+    ToolsJson[Your tools.json or MCP manifest] --> Norm[Normalize OpenAI or MCP shapes]
+    Norm --> Bridge[Node bridge.mjs]
+    Bridge --> Core["@tscg/core compiler"]
+    Core --> OutTxt[mcp_manifest.tscg.txt]
+    Core --> OutJson[mcp_manifest.tscg.json metrics]
+    Norm --> Saved[mcp_manifest.json]
+```
 
 ```text
-BEFORE (verbose JSON you provide)
+YOU PROVIDE
+  1) Skill folder (SKILL.md)     → SkillReducer (Paper 1)
+  2) MCP tools JSON (optional)   → TSCG (Paper 2)
+
+skillreducer reduce ./my-skill --tscg --tools tools.json
+        │
+        ├─► A) SkillReducer → lean SKILL.md (+ refs + scripts/)
+        └─► B) TSCG         → mcp_manifest.tscg.txt (compact schemas)
+```
+
+### Before → after (idea)
+
+```text
+BEFORE (verbose JSON)
 {
   "type": "function",
   "function": {
@@ -786,11 +888,7 @@ AFTER (TSCG compact text)
 get_weather(location:str!) -> weather data
 ```
 
-More worked JSON examples: [BEGINNER.md](BEGINNER.md) · [docs/REDUCTION_FLOW.md](docs/REDUCTION_FLOW.md).
-
-### How this repository implements TSCG (beginner)
-
-Same spirit as [§18](#18-how-this-repository-implements-the-paper), but for the **other** paper:
+### How this repository implements TSCG
 
 | TSCG idea | How this repo does it |
 |-----------|------------------------|
@@ -799,7 +897,7 @@ Same spirit as [§18](#18-how-this-repository-implements-the-paper), but for the
 | Call the TSCG compiler | Node bridge `skillreducer/tscg/bridge.mjs` → `@tscg/core` |
 | Python entrypoint | `skillreducer/tscg/compress.py` (`compress_tools`) |
 | Pipeline flag | `skillreducer reduce … --tscg` (config: `tscg.enabled`) |
-| Outputs | `mcp_manifest.json`, `mcp_manifest.tscg.txt`, `mcp_manifest.tscg.json` (metrics) |
+| Outputs | `mcp_manifest.json`, `mcp_manifest.tscg.txt`, `mcp_manifest.tscg.json` |
 
 **Setup (once):**
 
@@ -807,7 +905,7 @@ Same spirit as [§18](#18-how-this-repository-implements-the-paper), but for the
 cd skillreducer/tscg && npm install && cd ../..
 ```
 
-**Run both papers’ reductions:**
+**Run SkillReducer + TSCG:**
 
 ```bash
 skillreducer reduce ./my-skill --tscg --tools tools.json
@@ -815,14 +913,126 @@ skillreducer reduce ./my-skill --tscg --tools tools.json
 
 Without tools JSON, `--tscg` is skipped (`TSCG skipped: no tools`). Skill reduction still runs.
 
-**Privacy:** compiling schemas is local stdin/stdout after `npm install`. It does not upload your MCP JSON to a remote LLM. SkillReducer Stage 1–2 may still call an API unless you use `--no-llm`.
+**Privacy:** compiling schemas is local stdin/stdout after `npm install`. It does not upload your MCP JSON to a remote LLM. SkillReducer Stages 1–3 may still call an API unless you use `--no-llm`.
 
-Beginner walkthrough: [skillreducer/tscg/README.md](skillreducer/tscg/README.md) · [BEGINNER.md](BEGINNER.md).  
-Citations / BibTeX: [CITATION.md](CITATION.md). Papers index: [docs/PAPERS.md](docs/PAPERS.md).
+Beginner walkthrough: [skillreducer/tscg/README.md](skillreducer/tscg/README.md) · [BEGINNER.md](BEGINNER.md) · [docs/REDUCTION_FLOW.md](docs/REDUCTION_FLOW.md)
 
 ---
 
-## References (from paper)
+# Paper 3: SkillRevise
+
+## 21. SkillRevise — trace-conditioned skill revision
+
+> **Important:** SkillRevise is **not** part of SkillReducer (Gao et al.) or TSCG (Sakizli).  
+> It is a **separate research paper** by **Liu et al.** This repo **vendors** the upstream package under `src/skillrevise/` and exposes it as `skillreducer revise` — a **separate command** that does **not** run inside `reduce`.
+
+| | SkillReducer | SkillRevise (this section) |
+|--|--------------|----------------------------|
+| **Paper** | Gao et al., [2603.29919](https://arxiv.org/abs/2603.29919) | Liu et al., [2606.01139](https://arxiv.org/abs/2606.01139) |
+| **Title** | Optimizing LLM Agent Skills for Token Efficiency | Improving LLM-Authored Agent Skills via Trace-Conditioned Skill Revision |
+| **Goal** | Fewer tokens, same (or better) routing/task behavior | Better skill **behavior** from failed/successful runs |
+| **Signal** | Structure of `SKILL.md` + routing oracle | **Execution traces** (diagnose → revise → re-run) |
+| **In this repo** | `audit` / `reduce` / `agent` | `skillreducer revise` / `skillrevise` |
+| **Code** | `skillreducer/stage{1,2,3}/` | Vendored `src/skillrevise/` · wrapper [skillreducer/revise/README.md](skillreducer/revise/README.md) |
+| **Upstream** | — | [xuansenpa1/skillrevise](https://github.com/xuansenpa1/skillrevise) |
+
+### Problem
+
+LLM-authored skills often look plausible but **fail at runtime**: missing constraints, wrong tool usage, brittle examples, or incomplete procedures. Token compression alone cannot fix that — you need evidence from **what the agent actually did**.
+
+### Solution
+
+**SkillRevise** improves skills with a **trace-conditioned** loop:
+
+1. **Author / load** an initial skill (or use `--initial-skill`)
+2. **Execute** the skill on a task (paired evaluation / harness)
+3. **Diagnose** failures and gaps from the execution trace
+4. **Revise** the skill conditioned on that diagnosis (and optional principle memory)
+5. **Re-execute** and keep revisions that improve outcomes (up to `max_revisions`)
+
+Principle absorption can turn recurring failure patterns into reusable repair principles for later revisions.
+
+### Flow diagram
+
+```mermaid
+flowchart TD
+    Task[TaskSpec / tasks.json] --> Author[Author or load initial skill]
+    Author --> Eval1[Execute and evaluate]
+    Eval1 --> Diagnose[Diagnose from trace]
+    Diagnose --> Decide{Should revise?}
+    Decide -->|no| Done[Keep best skill]
+    Decide -->|yes| Revise[RevisionEngine revise skill]
+    Revise --> Eval2[Re-execute revised skill]
+    Eval2 --> Better{Improved?}
+    Better -->|yes| Update[Update current skill]
+    Better -->|no| KeepOrStop[Keep best or stop]
+    Update --> Diagnose
+    KeepOrStop --> Done
+```
+
+```text
+skillreducer revise path/to/tasks.json --limit 1 --output runs/out.json
+        │
+        ├─► execute skill on task(s)
+        ├─► diagnose from traces
+        ├─► revise SKILL.md (trace-conditioned)
+        └─► re-evaluate; keep improving revisions
+```
+
+### How this repository implements SkillRevise
+
+| Paper idea | How this repo does it |
+|------------|------------------------|
+| Vendored upstream package | `src/skillrevise/` (MIT; see `VENDOR.md`) |
+| Harness loop | `src/skillrevise/core/loop.py` (`HarnessLoop`) |
+| Diagnosis | `src/skillrevise/method/diagnosis.py` |
+| Revision | `src/skillrevise/method/revision.py` |
+| Principle memory | `src/skillrevise/method/principles.py` |
+| Thin CLI wrapper | `skillreducer/revise/runner.py` → `skillreducer revise …` |
+| Direct entry points | `skillrevise` / `skillrevise-llm` after `pip install -e .` |
+
+**Install:**
+
+```bash
+pip install -e .
+# optional analysis plots:
+# pip install -e ".[revise-analysis]"
+```
+
+**Run:**
+
+```bash
+skillreducer revise --skillrevise-help
+skillreducer revise path/to/tasks.json --limit 1 --baseline-only --output runs/out.json
+skillreducer revise path/to/tasks.json --initial-skill path/to/SKILL.md
+```
+
+Or call vendored CLIs directly: `skillrevise --help`, `skillrevise-llm --help`.
+
+**What is not vendored:** large upstream benchmark `data/` bundles — clone [xuansenpa1/skillrevise](https://github.com/xuansenpa1/skillrevise) if you need full eval sets.
+
+**Separation from reduce:**
+
+| Does | Does not |
+|------|----------|
+| Ship SkillRevise in-tree | Change Stages 1–3 or TSCG |
+| Expose `skillreducer revise` | Run automatically during `reduce` |
+| Improve skill quality from traces | Guarantee token reduction |
+
+---
+
+## References
+
+### Paper links (quick)
+
+| Paper | Link |
+|-------|------|
+| SkillReducer | https://arxiv.org/abs/2603.29919 · [`skill_reducer.pdf`](skill_reducer.pdf) |
+| TSCG | https://arxiv.org/abs/2605.04107 |
+| TSCG + Agentic RAG | https://arxiv.org/abs/2605.26165 |
+| SkillRevise | https://arxiv.org/abs/2606.01139 · https://github.com/xuansenpa1/skillrevise |
+
+### From SkillReducer and related work
 
 - Anthropic Claude Code docs
 - Zeller & Hildebrandt — Delta Debugging (TSE 2002)
@@ -833,9 +1043,12 @@ Citations / BibTeX: [CITATION.md](CITATION.md). Papers index: [docs/PAPERS.md](d
 - Li et al. — SkillsBench (arXiv 2602.12670)
 - Liu et al. — Lost in the Middle (TACL 2024)
 - Shi et al. — Distracted by Irrelevant Context (ICML 2023)
-- Sakizli — TSCG (arXiv 2605.04107); companion Agentic RAG (arXiv 2605.26165) — **separate papers**; see [§20](#20-another-paper-tscg-tool-schema-compression)
+- Sakizli — TSCG (arXiv 2605.04107); companion Agentic RAG (arXiv 2605.26165) — **§20**
+- Liu et al. — SkillRevise (arXiv 2606.01139) — **§21**
 
 ---
 
-*For the full academic treatment, equations, and appendices, see [`skill_reducer.pdf`](skill_reducer.pdf).*  
-*For the separate TSCG papers, see [docs/TSCG_PAPER_DETAIL.md](docs/TSCG_PAPER_DETAIL.md).*
+*For the full SkillReducer academic treatment, equations, and appendices, see [`skill_reducer.pdf`](skill_reducer.pdf).*  
+*For TSCG depth, see [docs/TSCG_PAPER_DETAIL.md](docs/TSCG_PAPER_DETAIL.md).*  
+*For SkillRevise CLI / vendor notes, see [skillreducer/revise/README.md](skillreducer/revise/README.md).*  
+*BibTeX for all three: [CITATION.md](CITATION.md).*
