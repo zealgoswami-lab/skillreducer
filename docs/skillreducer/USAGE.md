@@ -1,11 +1,44 @@
-# SkillReducer — usage details
+# SkillReducer — usage details + full flow
 
 CLI, install, and configuration for skill token reduction (Gao et al.).  
-New here? Start with [BEGINNER.md](BEGINNER.md). Research background: [PAPER.md](PAPER.md).
+New here? Start with [BEGINNER.md](BEGINNER.md). Research background: [PAPER.md](PAPER.md).  
+Hub: [../PAPER_DETAIL.md](../PAPER_DETAIL.md) · Overview: [../OVERVIEW.md](../OVERVIEW.md).
 
 Optional add-ons:
 - Tool schemas → [TSCG USAGE](../tscg/USAGE.md)
 - Quality from traces → [SkillRevise USAGE](../skillrevise/USAGE.md)
+
+---
+
+## Full flow overview
+
+```text
+1. audit          → token report + F1/F2/F3 flags
+2. reduce/agent   → Stage 1 (description) → Stage 2 (body) → Stage 3 (scripts)
+3. optional --tscg → compress tools.json → mcp_manifest.tscg.*
+4. inspect optimized/<skill>/  (never in-place by default)
+```
+
+```mermaid
+flowchart TB
+    In[Skill folder SKILL.md] --> Audit[audit]
+    Audit --> R[reduce / agent]
+    R --> S1[Stage 1 routing]
+    S1 --> S2[Stage 2 progressive disclosure]
+    S2 --> S3[Stage 3 scripts]
+    S3 --> Out[optimized/skill]
+    Tools[tools.json optional] --> TSCG[--tscg]
+    TSCG --> Out
+```
+
+| Stage | What changes | Typical flags |
+|-------|----------------|---------------|
+| 1 | YAML `description` | `--stage 1` |
+| 2 | Body → core + on-demand refs | `--stage 2` |
+| 3 | Code blocks → `scripts/` | `--stage 3` |
+| TSCG | Tool schemas (other paper) | `--tscg --tools …` |
+
+Worked example: [../REDUCTION_FLOW.md](../REDUCTION_FLOW.md).
 
 ## Install
 
@@ -139,6 +172,7 @@ skillrevise-benchmark path/to/tasks.json --manifest-kind skillsbench --limit 1
 ```
 
 Docs: [../skillrevise/USAGE.md](../skillrevise/USAGE.md) · benchmarks: [../../src/skillrevise/benchmarks/README.md](../../src/skillrevise/benchmarks/README.md)
+
 ### CLI reference
 
 | Command / flag | Description |

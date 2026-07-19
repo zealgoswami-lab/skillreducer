@@ -4,7 +4,7 @@ This repo implements **token reduction** for agent skills and (optionally) MCP t
 plus an **optional separate command** for execution-grounded skill revision.  
 Design and results belong to the paper authors — cite them, not only this GitHub project.
 
-**How they fit together:** [OVERVIEW.md](OVERVIEW.md)
+**How they fit together:** [OVERVIEW.md](OVERVIEW.md) · **Hub (all paper docs):** [PAPER_DETAIL.md](PAPER_DETAIL.md)
 
 | Paper | What it covers | In this repo | Docs |
 |-------|----------------|--------------|------|

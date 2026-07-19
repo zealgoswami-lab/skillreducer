@@ -1,9 +1,9 @@
 # Papers — moved
 
-Paper documentation now lives under [`docs/`](docs/):
+Paper documentation now lives under [`docs/PAPER_DETAIL.md`](docs/PAPER_DETAIL.md).
 
-| | Explanation | Beginner | Usage |
-|--|-------------|----------|-------|
+| Paper | Explanation | Beginner | Usage + flow |
+|-------|-------------|----------|--------------|
 | **Overview (all three)** | [docs/OVERVIEW.md](docs/OVERVIEW.md) | — | — |
 | **SkillReducer** | [docs/skillreducer/PAPER.md](docs/skillreducer/PAPER.md) | [BEGINNER](docs/skillreducer/BEGINNER.md) | [USAGE](docs/skillreducer/USAGE.md) |
 | **TSCG** | [docs/tscg/PAPER.md](docs/tscg/PAPER.md) | [BEGINNER](docs/tscg/BEGINNER.md) | [USAGE](docs/tscg/USAGE.md) |

@@ -15,7 +15,7 @@ Open-source toolkit for **token-efficient LLM agent skills**, grounded in three 
 | SkillReducer arXiv | [2603.29919](https://arxiv.org/abs/2603.29919) · [PDF](skill_reducer.pdf) · [PAPER](docs/skillreducer/PAPER.md) · [BEGINNER](docs/skillreducer/BEGINNER.md) · [USAGE](docs/skillreducer/USAGE.md) |
 | TSCG arXiv | [2605.04107](https://arxiv.org/abs/2605.04107) · [PAPER](docs/tscg/PAPER.md) · [BEGINNER](docs/tscg/BEGINNER.md) · [USAGE](docs/tscg/USAGE.md) |
 | SkillRevise arXiv | [2606.01139](https://arxiv.org/abs/2606.01139) · [PAPER](docs/skillrevise/PAPER.md) · [BEGINNER](docs/skillrevise/BEGINNER.md) · [USAGE](docs/skillrevise/USAGE.md) |
-| Paper index / overview | [docs/PAPERS.md](docs/PAPERS.md) · [docs/OVERVIEW.md](docs/OVERVIEW.md) |
+| Paper index / overview | [docs/PAPER_DETAIL.md](docs/PAPER_DETAIL.md) · [docs/PAPERS.md](docs/PAPERS.md) · [docs/OVERVIEW.md](docs/OVERVIEW.md) |
 | Citations | [CITATION.md](CITATION.md) |
 
 Works with **any agent platform** that uses the standard `SKILL.md` + YAML frontmatter convention (Claude Code, Windsurf, OpenCode, SkillHub, GitHub community skills, and similar).
@@ -374,7 +374,8 @@ ruff check skillreducer tests
 
 | Resource | Description |
 |----------|-------------|
-| [docs/OVERVIEW.md](docs/OVERVIEW.md) | How the three papers fit together |
+| [docs/PAPER_DETAIL.md](docs/PAPER_DETAIL.md) | Hub: per-paper explanation, beginner, usage |
+| [docs/OVERVIEW.md](docs/OVERVIEW.md) | How the three papers fit together (full flow) |
 | [docs/PAPERS.md](docs/PAPERS.md) | **Paper index** — links to PAPER / BEGINNER / USAGE per paper |
 | [docs/skillreducer/](docs/skillreducer/) | SkillReducer explanation, beginner, usage |
 | [docs/tscg/](docs/tscg/) | TSCG explanation, beginner, usage |

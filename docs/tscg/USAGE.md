@@ -1,7 +1,8 @@
-# TSCG — usage details
+# TSCG — usage details + full flow
 
 Compress MCP / tool JSON schemas with Sakizli’s `@tscg/core` after (or with) SkillReducer.  
-Beginner walkthrough: [BEGINNER.md](BEGINNER.md) · Paper: [PAPER.md](PAPER.md)
+Beginner: [BEGINNER.md](BEGINNER.md) · Paper: [PAPER.md](PAPER.md)  
+Hub: [../PAPER_DETAIL.md](../PAPER_DETAIL.md) · Overview: [../OVERVIEW.md](../OVERVIEW.md)
 
 ---
 
@@ -21,6 +22,49 @@ cd ../..
 
 ---
 
+## Full flow overview
+
+```text
+1. Put tools in tools.json (or mcp_manifest.json inside the skill)
+2. npm install once in skillreducer/tscg
+3. skillreducer reduce ./my-skill --tscg --tools tools.json
+4. Read optimized/my-skill/mcp_manifest.tscg.txt (+ metrics JSON)
+5. Feed compressed schemas to your agent / MCP client instead of raw JSON
+```
+
+```mermaid
+flowchart TB
+    subgraph in [Inputs]
+        Skill[Skill folder]
+        Tools[tools.json]
+    end
+
+    subgraph pipe [Pipeline]
+        SR[SkillReducer Stages 1-3]
+        Norm[Normalize manifest]
+        Comp[TSCG compile local]
+        SR --> Norm --> Comp
+    end
+
+    subgraph out [optimized/skill]
+        MD[SKILL.md + refs]
+        Full[mcp_manifest.json]
+        Compact[mcp_manifest.tscg.txt]
+        Metrics[mcp_manifest.tscg.json]
+    end
+
+    Skill --> SR
+    Tools --> Norm
+    SR --> MD
+    Comp --> Full
+    Comp --> Compact
+    Comp --> Metrics
+```
+
+Without tools JSON, `--tscg` is skipped (`TSCG skipped: no tools`). Skill reduction still runs.
+
+---
+
 ## Commands
 
 ```bash
@@ -32,9 +76,20 @@ skillreducer reduce ./my-skill --tscg
 
 # Via agent command
 skillreducer agent ./my-skill --tscg --tools tools.json
+
+# Heuristic skill stages + TSCG (no LLM for SkillReducer)
+skillreducer reduce ./my-skill --no-llm --tscg --tools tools.json
 ```
 
-Without tools JSON, `--tscg` is skipped (`TSCG skipped: no tools`). Skill reduction still runs.
+### Accepted tools JSON shapes
+
+Common shapes (see `skillreducer/tscg/README.md` for details):
+
+- OpenAI function-calling list / `{ "tools": [ … ] }`
+- Anthropic / MCP-style tool definitions
+- A skill-local `mcp_manifest.json`
+
+The bridge normalizes, then compiles. TSCG does **not** scrape `server.py` for you.
 
 ---
 
@@ -47,6 +102,13 @@ Without tools JSON, `--tscg` is skipped (`TSCG skipped: no tools`). Skill reduct
 | Tokenizer profile name | `tscg_model` | `tscg.model` (e.g. `claude-sonnet` — **not** a remote LLM call) |
 
 Default profile in this repo: **balanced**.
+
+```yaml
+tscg:
+  enabled: false
+  model: claude-sonnet
+  profile: balanced
+```
 
 ---
 
@@ -66,6 +128,8 @@ Report excerpt:
 TSCG (tool schemas)
   Tools: N | before -> after tokens (X% savings)
 ```
+
+Before/after worked example: [../REDUCTION_FLOW.md](../REDUCTION_FLOW.md).
 
 ---
 
@@ -89,3 +153,13 @@ TSCG (tool schemas)
 | `TSCG dependency missing` | `npm install` in `skillreducer/tscg` |
 
 **Privacy:** compiling schemas is local stdin/stdout after `npm install`. It does not upload your MCP JSON to a remote LLM.
+
+---
+
+## Separation from SkillReducer / SkillRevise
+
+| Does | Does not |
+|------|----------|
+| Shrink tool / MCP JSON tokens | Edit `SKILL.md` body rules |
+| Run as optional `--tscg` on `reduce`/`agent` | Replace Stages 1–3 |
+| Run offline (after npm install) | Fix skill behavior quality (use SkillRevise) |

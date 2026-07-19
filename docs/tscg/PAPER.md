@@ -1,6 +1,4 @@
-# TSCG — paper explanation
-
-Related: [BEGINNER.md](BEGINNER.md) · [USAGE.md](USAGE.md) · [../OVERVIEW.md](../OVERVIEW.md)
+# TSCG Paper — Detailed Explanation
 
 **Primary paper:** TSCG: Deterministic Tool-Schema Compilation for Agentic LLM Deployments  
 **Author:** Furkan Sakizli  
@@ -10,26 +8,33 @@ Related: [BEGINNER.md](BEGINNER.md) · [USAGE.md](USAGE.md) · [../OVERVIEW.md](
 **Companion paper:** Tool-Schema Compression Enables Agentic RAG Under Constrained Context Budgets  
 **arXiv:** [2605.26165](https://arxiv.org/abs/2605.26165)
 
-This document summarizes the papers for SkillReducer users.  
+> **Scope.** This file explains **TSCG** (Sakizli) — MCP / tool **JSON schema** tokens.  
+> Skill markdown: [SkillReducer PAPER](../skillreducer/PAPER.md).  
+> Skill quality: [SkillRevise PAPER](../skillrevise/PAPER.md).  
+> Hub: [PAPER_DETAIL.md](../PAPER_DETAIL.md) · Overview: [OVERVIEW.md](../OVERVIEW.md).
+
 **All TSCG algorithms, operators, and empirical results are by Furkan Sakizli (2026).**  
 This repository only *calls* `@tscg/core` after SkillReducer; it is not the TSCG research project.
 
-See [CITATION.md](../../CITATION.md) for BibTeX and [PAPERS.md](../PAPERS.md) for how SkillReducer + TSCG fit together.  
-Hands-on: [BEGINNER.md](BEGINNER.md) · [USAGE.md](USAGE.md).
+See [CITATION.md](../../CITATION.md). Hands-on: [BEGINNER.md](BEGINNER.md) · [USAGE.md](USAGE.md).
 
 ---
 
 ## Table of contents
 
 1. [Executive summary](#1-executive-summary)
-2. [The problem: tool-schema / “MCP tax”](#2-the-problem-tool-schema--mcp-tax)
-3. [What TSCG is](#3-what-tscg-is)
-4. [How compression works (operators)](#4-how-compression-works-operators)
-5. [Key results](#5-key-results)
-6. [Companion paper: Agentic RAG](#companion-paper-agentic-rag)
-7. [Privacy / offline behavior](#7-privacy--offline-behavior)
-8. [How this repository uses TSCG](#8-how-this-repository-uses-tscg)
-9. [Glossary](#9-glossary)
+2. [Two token budgets](#2-two-token-budgets)
+3. [The problem: tool-schema / “MCP tax”](#3-the-problem-tool-schema--mcp-tax)
+4. [What TSCG is](#4-what-tscg-is)
+5. [How compression works (operators)](#5-how-compression-works-operators)
+6. [Profiles and model archetypes](#6-profiles-and-model-archetypes)
+7. [Key results](#7-key-results)
+8. [Companion paper: Agentic RAG](#8-companion-paper-agentic-rag)
+9. [Privacy / offline behavior](#9-privacy--offline-behavior)
+10. [How this repository uses TSCG](#10-how-this-repository-uses-tscg)
+11. [Full flow overview](#11-full-flow-overview)
+12. [Glossary](#12-glossary)
+13. [Attribution](#13-attribution)
 
 ---
 
@@ -41,15 +46,32 @@ Agent frameworks (OpenAI function calling, Anthropic tool use, **MCP**) send **t
 
 - Input: tool definitions (OpenAI or Anthropic / MCP-style JSON)
 - Output: compact structured text (fewer tokens)
-- **No** model API calls, **no** fine-tuning, **no** runtime search
+- **No** model API calls, **No** fine-tuning, **No** runtime search
 - Formal claim: **≥ 51%** savings on well-formed schemas (paper)
 - Practical range often **~50–72%** depending on catalog and profile
 
-**Why SkillReducer cares:** skills and tools burn **different** token budgets. SkillReducer shrinks `SKILL.md`; TSCG shrinks tool schemas. Together they cut more context cost than either alone.
+**Why this repo cares:** skills and tools burn **different** token budgets. SkillReducer shrinks `SKILL.md`; TSCG shrinks tool schemas. Together they cut more context cost than either alone.
 
 ---
 
-## 2. The problem: tool-schema / “MCP tax”
+## 2. Two token budgets
+
+```text
+YOU PROVIDE
+  1) Skill folder (SKILL.md)     → SkillReducer paper (Gao et al.)
+  2) MCP tools JSON (optional)   → TSCG paper (Sakizli)   ← this doc
+
+skillreducer reduce ./my-skill --tscg --tools tools.json
+        │
+        ├─► A) SkillReducer → lean SKILL.md (+ refs + scripts/)
+        └─► B) TSCG         → mcp_manifest.tscg.txt (compact schemas)
+```
+
+SkillReducer **never invents** your MCP tools. You must supply the JSON (`--tools` or `mcp_manifest.json` in the skill folder). Without it, `--tscg` is skipped and skill reduction still runs.
+
+---
+
+## 3. The problem: tool-schema / “MCP tax”
 
 | Issue | Effect |
 |-------|--------|
@@ -62,7 +84,7 @@ The companion RAG paper shows a **binary** failure mode at tight budgets (e.g. 8
 
 ---
 
-## 3. What TSCG is
+## 4. What TSCG is
 
 | Property | Detail |
 |----------|--------|
@@ -76,9 +98,15 @@ TSCG does **not** rewrite your `server.py`. It transforms the **schema text** th
 
 ---
 
-## 4. How compression works (operators)
+## 5. How compression works (operators)
 
-The paper describes eight composable operators (names vary slightly across docs; idea is the same): shorten types, drop redundant keys/words, restructure for attention, align to tokenizers, optionally reinforce critical params (SAD, Claude-oriented).
+The paper describes composable operators (names vary slightly across docs; idea is the same):
+
+- Shorten type encodings  
+- Drop redundant keys / boilerplate words  
+- Restructure for attention / parsing  
+- Align to tokenizer profiles  
+- Optionally reinforce critical params (e.g. SAD — Selective Anchor Duplication, Claude-oriented / aggressive)
 
 **Intuition (before → after):**
 
@@ -103,19 +131,29 @@ AFTER (TSCG — fewer tokens)
 get_weather(location:str!) -> weather data
 ```
 
-Profiles:
+| Symbol (typical) | Meaning |
+|------------------|---------|
+| `str!` | required string |
+| `pages?:str` | optional string |
+| `-> …` | short return / result hint |
+
+---
+
+## 6. Profiles and model archetypes
 
 | Profile | Use when |
 |---------|----------|
 | `conservative` | Max compatibility; milder savings |
 | `balanced` | Default in this repo — good savings/accuracy tradeoff |
-| `aggressive` | Max compression (includes stronger operators; model-sensitive) |
+| `aggressive` | Max compression (stronger operators; model-sensitive) |
 
 The paper also reports **model archetypes** (e.g. Opus “operator-hungry”, Sonnet “operator-robust”, GPT-5.2 “operator-sensitive”) — pick profile per deployment model when accuracy matters.
 
+Config in this repo: `tscg.profile` / env `tscg_profile` (see [USAGE.md](USAGE.md)).
+
 ---
 
-## 5. Key results
+## 7. Key results
 
 From the primary TSCG paper / benchmarks (approximate; see arXiv for tables):
 
@@ -131,7 +169,7 @@ Exact numbers depend on model, tool count, and profile — always check your own
 
 ---
 
-## Companion paper: Agentic RAG
+## 8. Companion paper: Agentic RAG
 
 **Title:** Tool-Schema Compression Enables Agentic RAG Under Constrained Context Budgets  
 **arXiv:** [2605.26165](https://arxiv.org/abs/2605.26165)
@@ -143,11 +181,11 @@ Exact numbers depend on model, tool count, and profile — always check your own
 - At **32K** where both fit, accuracy deltas shrink → effect is **budget-driven**, not magic quality boost  
 - Scaling: JSON may overflow hundreds of tools sooner than compressed forms  
 
-**Takeaway for this repo:** if your agent loads many MCP tools, schema compression is not optional polish — it can be what keeps the task in context.
+**Takeaway:** if your agent loads many MCP tools, schema compression is not optional polish — it can be what keeps the task in context.
 
 ---
 
-## 7. Privacy / offline behavior
+## 9. Privacy / offline behavior
 
 | Step | Network? |
 |------|----------|
@@ -160,7 +198,16 @@ TSCG does **not** upload your MCP JSON to Sakizli’s servers or to a model API.
 
 ---
 
-## 8. How this repository uses TSCG
+## 10. How this repository uses TSCG
+
+| Piece | Path |
+|-------|------|
+| Normalize OpenAI / MCP shapes | `skillreducer/tscg/manifest.py` |
+| Node bridge | `skillreducer/tscg/bridge.mjs` → `@tscg/core` |
+| Python entrypoint | `skillreducer/tscg/compress.py` (`compress_tools`) |
+| Package folder README | `skillreducer/tscg/README.md` |
+| CLI | `--tscg` / `--tools` on `reduce` and `agent` |
+| Config | `tscg.enabled`, `tscg.profile`, `tscg.model` |
 
 ```text
 You provide:  skill folder + tools.json (or mcp_manifest.json)
@@ -175,26 +222,53 @@ skillreducer reduce --tscg --tools tools.json
   lean SKILL.md             mcp_manifest.tscg.txt
 ```
 
-Setup and beginner steps: [USAGE.md](USAGE.md)  
-Pipeline flag: `--tscg` / config `tscg.enabled`
+---
+
+## 11. Full flow overview
+
+```mermaid
+flowchart LR
+    A[tools.json or mcp_manifest.json] --> B[manifest.normalize]
+    B --> C[bridge.mjs + @tscg/core]
+    C --> D[mcp_manifest.tscg.txt]
+    C --> E[mcp_manifest.tscg.json metrics]
+```
+
+**CLI path:**
+
+```bash
+cd skillreducer/tscg && npm install && cd ../..
+skillreducer reduce ./my-skill --tscg --tools tools.json
+```
+
+**Outputs** (under `optimized/<skill-name>/`):
+
+| File | Meaning |
+|------|---------|
+| `mcp_manifest.json` | Your tools (full schemas, saved for review) |
+| `mcp_manifest.tscg.txt` | Compressed schemas — use these to save tokens |
+| `mcp_manifest.tscg.json` | Before/after token metrics |
+
+Worked before/after: [../REDUCTION_FLOW.md](../REDUCTION_FLOW.md) · Commands: [USAGE.md](USAGE.md).
 
 ---
 
-## 9. Glossary
+## 12. Glossary
 
 | Term | Meaning |
 |------|---------|
 | **Tool schema** | Name, description, parameters JSON for one tool |
 | **MCP tax / tools tax** | Tokens spent injecting schemas every turn |
-| **TSCG** | Token-Context Semantic Grammar / deterministic schema compiler |
+| **TSCG** | Deterministic tool-schema compiler (paper / `@tscg/core`) |
 | **Profile** | conservative / balanced / aggressive operator set |
 | **ARR** | Accuracy-Retained Ratio (TSCG accuracy ÷ baseline) |
 | **SAD** | Selective Anchor Duplication (aggressive / Claude-oriented) |
 
 ---
 
-## Attribution
+## 13. Attribution
 
 Please cite Sakizli (2026) when discussing TSCG methods or numbers.  
 Please cite Gao et al. (2026) for SkillReducer skill debloating.  
+Please cite Liu et al. (2026) for SkillRevise.  
 This GitHub repo is an integration, not a substitute for those papers.
