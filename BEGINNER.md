@@ -8,6 +8,6 @@ Start here depending on what you want to do:
 | Compress MCP / tool schemas | [docs/tscg/BEGINNER.md](docs/tscg/BEGINNER.md) |
 | Improve skill quality from traces | [docs/skillrevise/BEGINNER.md](docs/skillrevise/BEGINNER.md) |
 | How the three papers fit | [docs/OVERVIEW.md](docs/OVERVIEW.md) |
-| Paper docs hub | [docs/PAPER_DETAIL.md](docs/PAPER_DETAIL.md) |
+| Papers index | [docs/PAPERS.md](docs/PAPERS.md) |
 
 Usage / CLI details: [SkillReducer USAGE](docs/skillreducer/USAGE.md) · [TSCG USAGE](docs/tscg/USAGE.md) · [SkillRevise USAGE](docs/skillrevise/USAGE.md)

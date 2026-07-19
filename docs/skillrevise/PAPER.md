@@ -10,7 +10,7 @@
 > **Scope.** This file explains the **SkillRevise** paper (Liu et al.) — skill **quality** from execution traces.  
 > Token compression of `SKILL.md`: [SkillReducer PAPER](../skillreducer/PAPER.md).  
 > Tool schemas: [TSCG PAPER](../tscg/PAPER.md).  
-> Hub: [PAPER_DETAIL.md](../PAPER_DETAIL.md) · Overview: [OVERVIEW.md](../OVERVIEW.md).
+> Papers: [PAPERS.md](../PAPERS.md) · Overview: [OVERVIEW.md](../OVERVIEW.md).
 
 **All SkillRevise framework design, algorithms, and empirical results are by Liu et al. (2026).**  
 This repository vendors the package and exposes it as a separate command — it does **not** run inside `reduce`. See [CITATION.md](../../CITATION.md).

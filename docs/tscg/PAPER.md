@@ -11,7 +11,7 @@
 > **Scope.** This file explains **TSCG** (Sakizli) — MCP / tool **JSON schema** tokens.  
 > Skill markdown: [SkillReducer PAPER](../skillreducer/PAPER.md).  
 > Skill quality: [SkillRevise PAPER](../skillrevise/PAPER.md).  
-> Hub: [PAPER_DETAIL.md](../PAPER_DETAIL.md) · Overview: [OVERVIEW.md](../OVERVIEW.md).
+> Papers: [PAPERS.md](../PAPERS.md) · Overview: [OVERVIEW.md](../OVERVIEW.md).
 
 **All TSCG algorithms, operators, and empirical results are by Furkan Sakizli (2026).**  
 This repository only *calls* `@tscg/core` after SkillReducer; it is not the TSCG research project.

@@ -8,7 +8,7 @@ This repository integrates **three research papers**. Each has its own explanati
 | 2 | **TSCG** (Sakizli) | MCP / tool JSON schema tokens | [PAPER](tscg/PAPER.md) · [BEGINNER](tscg/BEGINNER.md) · [USAGE](tscg/USAGE.md) |
 | 3 | **SkillRevise** (Liu et al.) | Skill **quality** from traces | [PAPER](skillrevise/PAPER.md) · [BEGINNER](skillrevise/BEGINNER.md) · [USAGE](skillrevise/USAGE.md) |
 
-**Hub:** [PAPER_DETAIL.md](PAPER_DETAIL.md) · **Citations:** [CITATION.md](../CITATION.md) · **Index:** [PAPERS.md](PAPERS.md)
+**Papers:** [PAPERS.md](PAPERS.md) · **Citations:** [CITATION.md](../CITATION.md)
 
 > **Attribution.** Algorithm design and empirical results belong to each paper’s authors. This repo is an independent implementation / integration.
 
@@ -171,8 +171,7 @@ Simple diagrams + one before/after: [REDUCTION_FLOW.md](REDUCTION_FLOW.md)
 
 | Doc | Use when |
 |-----|----------|
-| [PAPER_DETAIL.md](PAPER_DETAIL.md) | Hub for all paper docs |
-| [PAPERS.md](PAPERS.md) | Short paper index + links |
+| [PAPERS.md](PAPERS.md) | Paper index + links |
 | [skillreducer/](skillreducer/) | Skill token debloating |
 | [tscg/](tscg/) | Tool schema compression |
 | [skillrevise/](skillrevise/) | Trace-conditioned revision |
