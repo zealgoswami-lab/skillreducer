@@ -152,5 +152,57 @@ def agent_cmd(
             click.echo(f"Wrote: {result.output_dir}")
 
 
+@main.command(
+    "revise",
+    context_settings={
+        "ignore_unknown_options": True,
+        "allow_extra_args": True,
+    },
+)
+@click.option(
+    "--skillrevise-help",
+    is_flag=True,
+    help="Show upstream SkillRevise CLI help (requires optional install).",
+)
+@click.pass_context
+def revise_cmd(ctx: click.Context, skillrevise_help: bool) -> None:
+    """Run SkillRevise (Liu et al.) as a separate optional command; does not alter audit/reduce.
+
+    All remaining arguments are forwarded to the vendored ``skillrevise`` CLI
+    (``src/skillrevise/``). See also: skillreducer/revise/README.md
+    """
+    from skillreducer.revise.runner import (
+        INSTALL_HINT,
+        SkillReviseNotInstalled,
+        run_skillrevise,
+        skillrevise_installed,
+    )
+
+    forwarded = list(ctx.args)
+    if skillrevise_help:
+        forwarded = ["--help"]
+
+    if not forwarded:
+        click.echo(
+            INSTALL_HINT
+            if not skillrevise_installed()
+            else (
+                "Usage: skillreducer revise <tasks.json> [skillrevise options...]\n"
+                "       skillreducer revise --skillrevise-help\n"
+                "Docs:  skillreducer/revise/README.md"
+            )
+        )
+        if not skillrevise_installed():
+            raise click.ClickException("SkillRevise optional dependency is not installed.")
+        return
+
+    try:
+        code = run_skillrevise(forwarded)
+    except SkillReviseNotInstalled as exc:
+        raise click.ClickException(str(exc)) from exc
+    if code:
+        ctx.exit(code)
+
+
 if __name__ == "__main__":
     main()

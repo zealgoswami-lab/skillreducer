@@ -194,11 +194,24 @@ After optimization, reference files include routing metadata (`when`, `topics`) 
 | `skillreducer audit <path>` | Token report + F1/F2/F3 issue flags |
 | `skillreducer reduce <path>` | Run Stage 1 + Stage 2 optimization (OpenAI client) |
 | `skillreducer agent <path>` | Same pipeline via Agno agent (skill folder → updated files) |
+| `skillreducer revise …` | **Optional** SkillRevise (Liu et al.) — separate command; does not change reduce |
 | `--stage 1` / `--stage 2` / `--stage 3` | Run a single stage |
 | `--tscg` / `--tools <json>` | Compress tool schemas with TSCG after reduce |
 | `--recursive` | Process all skills under a directory |
 | `--dry-run` | Report savings without writing files |
 | `--no-llm` | Heuristic mode (no API calls) |
+
+### Optional SkillRevise (skill quality — separate command)
+
+[SkillRevise](https://github.com/xuansenpa1/skillrevise) (Liu et al., [arXiv:2606.01139](https://arxiv.org/abs/2606.01139)) is **vendored** under `src/skillrevise/` (no external git install). It revises skills from execution traces and is **not** wired into `reduce`:
+
+```bash
+pip install -e .
+skillreducer revise --skillrevise-help
+# or: skillrevise <tasks.json> [options...]
+```
+
+See [skillreducer/revise/README.md](skillreducer/revise/README.md).
 
 ### Optional TSCG (tool schemas)
 
@@ -237,14 +250,15 @@ ruff check src tests
 
 | Resource | Description |
 |----------|-------------|
-| [docs/PAPERS.md](docs/PAPERS.md) | **Paper index** — SkillReducer + TSCG and how they fit |
+| [docs/PAPERS.md](docs/PAPERS.md) | **Paper index** — SkillReducer + TSCG + SkillRevise |
 | [docs/REDUCTION_FLOW.md](docs/REDUCTION_FLOW.md) | **Simple flow + one example** (skill + optional MCP JSON) |
 | [PAPER_DETAIL.md](PAPER_DETAIL.md) | SkillReducer paper (Gao et al.) in depth |
 | [docs/TSCG_PAPER_DETAIL.md](docs/TSCG_PAPER_DETAIL.md) | TSCG papers (Sakizli) in depth |
-| [CITATION.md](CITATION.md) | BibTeX / APA for SkillReducer and TSCG |
+| [skillreducer/revise/README.md](skillreducer/revise/README.md) | Optional SkillRevise CLI wrapper |
+| [CITATION.md](CITATION.md) | BibTeX / APA for SkillReducer, TSCG, and SkillRevise |
 | [skill_reducer.pdf](skill_reducer.pdf) | SkillReducer paper (local copy) |
 
-If you use this tool in research, please cite the **SkillReducer paper** (Gao et al., 2026) for skill debloating, and the **TSCG papers** (Sakizli, 2026) when discussing `--tscg` / schema compression — not this repository alone.
+If you use this tool in research, please cite the **SkillReducer paper** (Gao et al., 2026) for skill debloating, the **TSCG papers** (Sakizli, 2026) when discussing `--tscg`, and **SkillRevise** (Liu et al., 2026) for `revise` — not this repository alone.
 
 ## License
 

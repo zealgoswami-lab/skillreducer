@@ -99,6 +99,41 @@ Full write-up: [docs/TSCG_PAPER_DETAIL.md](docs/TSCG_PAPER_DETAIL.md)
 
 ---
 
+## SkillRevise (execution-grounded skill revision)
+
+`skillreducer revise` uses the **vendored** package under [`src/skillrevise/`](src/skillrevise/)  
+(from [`xuansenpa1/skillrevise`](https://github.com/xuansenpa1/skillrevise)).  
+**Separate command** — does not change `audit` / `reduce` / `agent`.
+
+**Title:** SkillRevise: Improving LLM-Authored Agent Skills via Trace-Conditioned Skill Revision
+
+**Authors:** Yuxuan Liu, Zhaochen Su, Lingyun Xie, Yuhao Zhang, Qing Zong, Jiahe Guo, Zhongwei Xie, Yiyan Ji, Yauwai Yim, Hongyu Luo, Xiyu Ren, Ruan Chenyu, Haoran Li, Yangqiu Song
+
+**arXiv:** [2606.01139](https://arxiv.org/abs/2606.01139)
+
+```bibtex
+@misc{liu2026skillrevise,
+  title         = {SkillRevise: Improving LLM-Authored Agent Skills via Trace-Conditioned Skill Revision},
+  author        = {Liu, Yuxuan and Su, Zhaochen and Xie, Lingyun and Zhang, Yuhao and Zong, Qing and Guo, Jiahe and Xie, Zhongwei and Ji, Yiyan and Yim, Yauwai and Luo, Hongyu and Ren, Xiyu and Ruan, Chenyu and Li, Haoran and Song, Yangqiu},
+  year          = {2026},
+  eprint        = {2606.01139},
+  archivePrefix = {arXiv},
+  url           = {https://arxiv.org/abs/2606.01139}
+}
+```
+
+### What to attribute
+
+| Use case | Cite |
+|----------|------|
+| Trace-conditioned skill revision / diagnosis / principle memory | Liu et al. (2026) SkillRevise |
+| SkillsBench revision results in that paper | Liu et al. (2026) |
+| This repo’s `skillreducer revise` CLI forwarding | Optional: this GitHub repository |
+
+Wrapper docs: [skillreducer/revise/README.md](skillreducer/revise/README.md)
+
+---
+
 ## This repository
 
 | Use case | Cite |
@@ -106,9 +141,10 @@ Full write-up: [docs/TSCG_PAPER_DETAIL.md](docs/TSCG_PAPER_DETAIL.md)
 | CLI / Python integration only | Optional: this GitHub repository |
 | SkillReducer algorithms or numbers | Gao et al. (2026) |
 | TSCG algorithms or numbers | Sakizli (2026) |
+| SkillRevise algorithms or numbers | Liu et al. (2026) |
 
 Paper index: [docs/PAPERS.md](docs/PAPERS.md)
 
 ## Acknowledgment
 
-The `skillreducer` package implements ideas from Gao et al. (2026) and optionally integrates `@tscg/core` from Sakizli (2026). We thank the authors for publishing their work. This project is **not** affiliated with or endorsed by the paper authors unless stated otherwise.
+The `skillreducer` package implements ideas from Gao et al. (2026), optionally integrates `@tscg/core` from Sakizli (2026), and vendors SkillRevise from Liu et al. (2026) under `src/skillrevise/`. We thank the authors for publishing their work. This project is **not** affiliated with or endorsed by the paper authors unless stated otherwise.

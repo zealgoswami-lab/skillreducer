@@ -288,8 +288,17 @@ Full beginner steps for tools: [`skillreducer/tscg/README.md`](skillreducer/tscg
 | `audit` | Count skill tokens and flag common problems |
 | `reduce` | Write a smaller skill into `optimized/` |
 | `reduce --tscg --tools …` | Same + compress **your** MCP JSON schemas |
+| `revise …` | **Optional** SkillRevise (separate paper) — does **not** change reduce |
 
 **Important:** originals are not overwritten. Output goes to `optimized/` by default.
+
+Optional quality pass (vendored under `src/skillrevise/`):
+
+```bash
+skillreducer revise --skillrevise-help
+```
+
+Details: [`skillreducer/revise/README.md`](skillreducer/revise/README.md).
 
 ---
 

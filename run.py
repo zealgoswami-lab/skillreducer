@@ -7,6 +7,7 @@ Usage:
     python run.py audit data --recursive
     python run.py reduce data/pdf-processing --stage 1
     python run.py agent data/marketing-strategy --stage 1
+    python run.py revise --skillrevise-help   # SkillRevise; vendored in src/skillrevise
 """
 
 from __future__ import annotations
