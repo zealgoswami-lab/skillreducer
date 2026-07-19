@@ -162,21 +162,31 @@ def agent_cmd(
 @click.option(
     "--skillrevise-help",
     is_flag=True,
-    help="Show upstream SkillRevise CLI help (requires optional install).",
+    help="Show upstream SkillRevise CLI help (requires vendored skillrevise).",
 )
 @click.pass_context
 def revise_cmd(ctx: click.Context, skillrevise_help: bool) -> None:
-    """Run SkillRevise (Liu et al.) as a separate optional command; does not alter audit/reduce.
+    """Run SkillRevise (Liu et al.) as a separate command; does not alter audit/reduce.
 
-    All remaining arguments are forwarded to the vendored ``skillrevise`` CLI
-    (``src/skillrevise/``). See also: skillreducer/revise/README.md
+    Forwards arguments to the vendored ``skillrevise`` CLI under ``src/skillrevise/``.
+    Docs: src/skillrevise/README.md
     """
-    from skillreducer.revise.runner import (
-        INSTALL_HINT,
-        SkillReviseNotInstalled,
-        run_skillrevise,
-        skillrevise_installed,
+    install_hint = (
+        "SkillRevise could not be imported.\n\n"
+        "Expected vendored package at src/skillrevise (import name: skillrevise).\n"
+        "Reinstall editable:\n\n"
+        "  pip install -e .\n\n"
+        "Upstream: https://github.com/xuansenpa1/skillrevise\n"
+        "Paper:    https://arxiv.org/abs/2606.01139\n"
+        "Docs:     src/skillrevise/README.md\n\n"
+        "``skillreducer revise`` forwards args to the SkillRevise CLI.\n"
+        "It does not change ``audit``, ``reduce``, or ``agent``."
     )
+
+    try:
+        import skillrevise  # noqa: F401
+    except ImportError as exc:
+        raise click.ClickException(install_hint) from exc
 
     forwarded = list(ctx.args)
     if skillrevise_help:
@@ -184,24 +194,29 @@ def revise_cmd(ctx: click.Context, skillrevise_help: bool) -> None:
 
     if not forwarded:
         click.echo(
-            INSTALL_HINT
-            if not skillrevise_installed()
-            else (
-                "Usage: skillreducer revise <tasks.json> [skillrevise options...]\n"
-                "       skillreducer revise --skillrevise-help\n"
-                "Docs:  skillreducer/revise/README.md"
-            )
+            "Usage: skillreducer revise <tasks.json> [skillrevise options...]\n"
+            "       skillreducer revise --skillrevise-help\n"
+            "Docs:  src/skillrevise/README.md"
         )
-        if not skillrevise_installed():
-            raise click.ClickException("SkillRevise optional dependency is not installed.")
         return
 
+    from skillrevise.cli import main as skillrevise_main
+    import sys
+
+    previous = sys.argv
+    sys.argv = ["skillrevise", *forwarded]
     try:
-        code = run_skillrevise(forwarded)
-    except SkillReviseNotInstalled as exc:
-        raise click.ClickException(str(exc)) from exc
-    if code:
-        ctx.exit(code)
+        skillrevise_main()
+    except SystemExit as exc:
+        code = exc.code
+        if code is None:
+            return
+        if isinstance(code, int) and code:
+            ctx.exit(code)
+        if code not in (None, 0):
+            ctx.exit(1)
+    finally:
+        sys.argv = previous
 
 
 if __name__ == "__main__":

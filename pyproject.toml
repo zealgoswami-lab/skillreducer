@@ -31,6 +31,7 @@ revise-analysis = ["matplotlib>=3.7", "numpy>=1.24"]
 skillreducer = "skillreducer.cli:main"
 skillrevise = "skillrevise.cli:main"
 skillrevise-llm = "skillrevise.llm.command:main"
+skillrevise-benchmark = "skillrevise.benchmarks.run_benchmark:main"
 skillrevise-convert-skillsbench = "skillrevise.benchmarks.convert_skillsbench:main"
 
 [tool.setuptools.packages.find]
@@ -42,9 +43,8 @@ skillreducer = [
     "tscg/bridge.mjs",
     "tscg/package.json",
     "tscg/README.md",
-    "revise/README.md",
 ]
-skillrevise = ["LICENSE", "VENDOR.md"]
+skillrevise = ["LICENSE", "VENDOR.md", "README.md", "benchmarks/README.md"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

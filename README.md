@@ -14,7 +14,7 @@ Open-source toolkit for **token-efficient LLM agent skills**, grounded in three 
 |----------|------|
 | SkillReducer arXiv | [2603.29919](https://arxiv.org/abs/2603.29919) · [PDF](skill_reducer.pdf) · [Detail](PAPER_DETAIL.md) |
 | TSCG arXiv | [2605.04107](https://arxiv.org/abs/2605.04107) · [Detail](docs/TSCG_PAPER_DETAIL.md) |
-| SkillRevise arXiv | [2606.01139](https://arxiv.org/abs/2606.01139) · [Wrapper](skillreducer/revise/README.md) |
+| SkillRevise arXiv | [2606.01139](https://arxiv.org/abs/2606.01139) · [Docs](src/skillrevise/README.md) |
 | Paper index | [docs/PAPERS.md](docs/PAPERS.md) |
 | Citations | [CITATION.md](CITATION.md) |
 
@@ -73,7 +73,7 @@ Deep dive: [docs/TSCG_PAPER_DETAIL.md](docs/TSCG_PAPER_DETAIL.md) · Setup: [ski
 
 **In this repo.** Exposed as `skillreducer revise` — **not** wired into `reduce`. Use it when you care about behavior quality, not only token count.
 
-Deep dive: [skillreducer/revise/README.md](skillreducer/revise/README.md)
+Deep dive: [src/skillrevise/README.md](src/skillrevise/README.md)
 
 ---
 
@@ -243,9 +243,14 @@ Writes `mcp_manifest.json`, `mcp_manifest.tscg.txt`, and `mcp_manifest.tscg.json
 
 ```bash
 skillreducer revise --skillrevise-help
-# or: skillrevise <tasks.json> [options...]
+skillrevise path/to/tasks.json --limit 1 --output runs/out.json
+
+# Benchmark / paper evals only (SkillsBench, etc.):
+skillrevise-benchmark --help
+skillrevise-benchmark path/to/tasks.json --manifest-kind skillsbench --limit 1
 ```
 
+Docs: [src/skillrevise/README.md](src/skillrevise/README.md) · benchmarks: [src/skillrevise/benchmarks/README.md](src/skillrevise/benchmarks/README.md)
 ### CLI reference
 
 | Command / flag | Description |
@@ -373,7 +378,7 @@ ruff check skillreducer tests
 | [docs/REDUCTION_FLOW.md](docs/REDUCTION_FLOW.md) | Simple flow + one example |
 | [PAPER_DETAIL.md](PAPER_DETAIL.md) | SkillReducer paper (Gao et al.) in depth |
 | [docs/TSCG_PAPER_DETAIL.md](docs/TSCG_PAPER_DETAIL.md) | TSCG papers (Sakizli) in depth |
-| [skillreducer/revise/README.md](skillreducer/revise/README.md) | Optional SkillRevise CLI wrapper |
+| [src/skillrevise/README.md](src/skillrevise/README.md) | Vendored SkillRevise (Liu et al.) |
 | [CITATION.md](CITATION.md) | BibTeX / APA for all three papers |
 | [skill_reducer.pdf](skill_reducer.pdf) | SkillReducer paper (local copy) |
 

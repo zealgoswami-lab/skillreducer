@@ -298,7 +298,7 @@ Optional quality pass (vendored under `src/skillrevise/`):
 skillreducer revise --skillrevise-help
 ```
 
-Details: [`skillreducer/revise/README.md`](skillreducer/revise/README.md).
+Details: [`src/skillrevise/README.md`](src/skillrevise/README.md).
 
 ---
 
