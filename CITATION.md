@@ -42,7 +42,7 @@ Gao, Y., Li, Z., Yuan, Y., Ji, Z., Ma, P., & Wang, S. (2026). *SkillReducer: Opt
 
 **Key results (from the paper):** ~48% description / ~39% body token reduction; 86% functional pass rate; +2.8% quality (less-is-more); 0.965 cross-model retention.
 
-Full write-up: [PAPER_DETAIL.md](PAPER_DETAIL.md)
+Full write-up: [docs/skillreducer/PAPER.md](docs/skillreducer/PAPER.md) · [BEGINNER](docs/skillreducer/BEGINNER.md) · [USAGE](docs/skillreducer/USAGE.md)
 
 ---
 
@@ -95,7 +95,7 @@ Optional `--tscg` path in this repo uses [`@tscg/core`](https://www.npmjs.com/pa
 | Tool–context trade-off for agentic RAG | Sakizli (2026) TSCG-RAG |
 | This repo’s `--tscg` CLI wiring | Optional: this GitHub repository |
 
-Full write-up: [docs/TSCG_PAPER_DETAIL.md](docs/TSCG_PAPER_DETAIL.md)
+Full write-up: [docs/tscg/PAPER.md](docs/tscg/PAPER.md) · [BEGINNER](docs/tscg/BEGINNER.md) · [USAGE](docs/tscg/USAGE.md)
 
 ---
 
@@ -130,7 +130,7 @@ Full write-up: [docs/TSCG_PAPER_DETAIL.md](docs/TSCG_PAPER_DETAIL.md)
 | SkillsBench revision results in that paper | Liu et al. (2026) |
 | This repo’s `skillreducer revise` CLI forwarding | Optional: this GitHub repository |
 
-Docs: [src/skillrevise/README.md](src/skillrevise/README.md)
+Docs: [docs/skillrevise/PAPER.md](docs/skillrevise/PAPER.md) · [USAGE](docs/skillrevise/USAGE.md) · package [src/skillrevise/README.md](src/skillrevise/README.md)
 
 ---
 

@@ -2,7 +2,7 @@
 
 Classify the `SKILL.md` body, keep actionable **core rules** always loaded, and move examples / templates / background into on-demand reference files.
 
-Paper: Gao et al. 2026, Algorithm 2 ([arXiv:2603.29919](https://arxiv.org/abs/2603.29919)). Background: [PAPER_DETAIL.md](../../PAPER_DETAIL.md) sections 7–8.
+Paper: Gao et al. 2026, Algorithm 2 ([arXiv:2603.29919](https://arxiv.org/abs/2603.29919)). Background: [docs/skillreducer/PAPER.md](../../docs/skillreducer/PAPER.md) sections 7–8.
 
 ## What it does
 
