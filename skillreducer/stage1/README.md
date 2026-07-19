@@ -2,7 +2,7 @@
 
 Code for **Stage 1** of SkillReducer: optimize the YAML `description` field in `SKILL.md` so agents route correctly with fewer tokens.
 
-Paper reference: Gao et al. 2026, Algorithm 1 ([arXiv:2603.29919](https://arxiv.org/abs/2603.29919)). For the research background see [PAPER_DETAIL.md](../../PAPER_DETAIL.md).
+Paper reference: Gao et al. 2026, Algorithm 1 ([arXiv:2603.29919](https://arxiv.org/abs/2603.29919)). For the research background see [docs/skillreducer/PAPER.md](../../docs/skillreducer/PAPER.md).
 
 ## What Stage 1 does
 

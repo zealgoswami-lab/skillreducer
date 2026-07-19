@@ -20,7 +20,7 @@ SkillRevise improves skill **behavior** from execution traces. SkillReducer impr
 | Tool JSON schemas | TSCG | `skillreducer reduce … --tscg` |
 | Skill quality from traces | **SkillRevise** (this package) | `skillrevise` or `skillreducer revise` |
 
-See also: [PAPER_DETAIL.md §21](../../PAPER_DETAIL.md#21-skillrevise--trace-conditioned-skill-revision) · [CITATION.md](../../CITATION.md) · [docs/PAPERS.md](../../docs/PAPERS.md)
+See also: [docs/skillrevise/PAPER.md](../../docs/skillrevise/PAPER.md) · [BEGINNER](../../docs/skillrevise/BEGINNER.md) · [USAGE](../../docs/skillrevise/USAGE.md) · [CITATION.md](../../CITATION.md) · [docs/PAPERS.md](../../docs/PAPERS.md)
 
 ---
 

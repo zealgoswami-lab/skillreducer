@@ -1,4 +1,6 @@
-# TSCG folder — Beginner guide
+# TSCG — Beginner guide
+
+Related: [PAPER.md](PAPER.md) · [USAGE.md](USAGE.md) · [../OVERVIEW.md](../OVERVIEW.md) · [../PAPER_DETAIL.md](../PAPER_DETAIL.md)
 
 This folder is **optional**.  
 Use it only if you want to cut tokens from **MCP / tool schemas**, not from `SKILL.md` text.
@@ -255,10 +257,10 @@ TSCG (tool schemas)
 
 ## Related
 
-- Main beginner guide (includes how reduction works): [../../docs/skillreducer/BEGINNER.md](../../docs/skillreducer/BEGINNER.md)
+- Main beginner guide (includes how reduction works): [../skillreducer/BEGINNER.md](../skillreducer/BEGINNER.md)
 - Full project README: [../../README.md](../../README.md)
-- **TSCG docs:** [PAPER](../../docs/tscg/PAPER.md) · [BEGINNER](../../docs/tscg/BEGINNER.md) · [USAGE](../../docs/tscg/USAGE.md)
-- **Flow diagrams:** [../../docs/REDUCTION_FLOW.md](../../docs/REDUCTION_FLOW.md)
-- All papers index: [../../docs/PAPERS.md](../../docs/PAPERS.md)
+- **TSCG paper details:** [PAPER.md](PAPER.md)
+- **Flow diagrams:** [../REDUCTION_FLOW.md](../REDUCTION_FLOW.md)
+- All papers index: [../PAPERS.md](../PAPERS.md)
 - Citations: [../../CITATION.md](../../CITATION.md)
 - Package: [@tscg/core on npm](https://www.npmjs.com/package/@tscg/core)

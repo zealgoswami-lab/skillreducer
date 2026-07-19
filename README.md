@@ -1,6 +1,6 @@
 # skillreducer
 
-> **New here?** Start with the [Beginner guide](BEGINNER.md) (install, first audit/reduce, optional TSCG).
+> **New here?** Start with the [Beginner guides](BEGINNER.md) — SkillReducer / TSCG / SkillRevise each have beginner + usage docs under [`docs/`](docs/).
 
 Open-source toolkit for **token-efficient LLM agent skills**, grounded in three research papers:
 
@@ -12,10 +12,10 @@ Open-source toolkit for **token-efficient LLM agent skills**, grounded in three 
 
 | Resource | Link |
 |----------|------|
-| SkillReducer arXiv | [2603.29919](https://arxiv.org/abs/2603.29919) · [PDF](skill_reducer.pdf) · [Detail](PAPER_DETAIL.md) |
-| TSCG arXiv | [2605.04107](https://arxiv.org/abs/2605.04107) · [Detail](docs/TSCG_PAPER_DETAIL.md) |
-| SkillRevise arXiv | [2606.01139](https://arxiv.org/abs/2606.01139) · [Docs](src/skillrevise/README.md) |
-| Paper index | [docs/PAPERS.md](docs/PAPERS.md) |
+| SkillReducer arXiv | [2603.29919](https://arxiv.org/abs/2603.29919) · [PDF](skill_reducer.pdf) · [PAPER](docs/skillreducer/PAPER.md) · [BEGINNER](docs/skillreducer/BEGINNER.md) · [USAGE](docs/skillreducer/USAGE.md) |
+| TSCG arXiv | [2605.04107](https://arxiv.org/abs/2605.04107) · [PAPER](docs/tscg/PAPER.md) · [BEGINNER](docs/tscg/BEGINNER.md) · [USAGE](docs/tscg/USAGE.md) |
+| SkillRevise arXiv | [2606.01139](https://arxiv.org/abs/2606.01139) · [PAPER](docs/skillrevise/PAPER.md) · [BEGINNER](docs/skillrevise/BEGINNER.md) · [USAGE](docs/skillrevise/USAGE.md) |
+| Paper index / overview | [docs/PAPER_DETAIL.md](docs/PAPER_DETAIL.md) · [docs/PAPERS.md](docs/PAPERS.md) · [docs/OVERVIEW.md](docs/OVERVIEW.md) |
 | Citations | [CITATION.md](CITATION.md) |
 
 Works with **any agent platform** that uses the standard `SKILL.md` + YAML frontmatter convention (Claude Code, Windsurf, OpenCode, SkillHub, GitHub community skills, and similar).
@@ -48,7 +48,7 @@ Tool / MCP schemas        →  TSCG                 →  lean mcp_manifest.tscg.
 
 **Reported results (paper).** ~48% description compression, ~39% body compression, 86% functional retention; SkillsBench 87/87 with no regression.
 
-Deep dive: [PAPER_DETAIL.md](PAPER_DETAIL.md) · Stage docs: [stage1](skillreducer/stage1/README.md) · [stage2](skillreducer/stage2/README.md) · [stage3](skillreducer/stage3/README.md)
+Deep dive: [docs/skillreducer/PAPER.md](docs/skillreducer/PAPER.md) · [BEGINNER](docs/skillreducer/BEGINNER.md) · [USAGE](docs/skillreducer/USAGE.md) · Stage docs: [stage1](skillreducer/stage1/README.md) · [stage2](skillreducer/stage2/README.md) · [stage3](skillreducer/stage3/README.md)
 
 ### 2. TSCG — tool / MCP schema compression
 
@@ -61,7 +61,7 @@ Deep dive: [PAPER_DETAIL.md](PAPER_DETAIL.md) · Stage docs: [stage1](skillreduc
 
 **In this repo.** Optional flag on `reduce` / `agent` — does **not** replace Stages 1–3.
 
-Deep dive: [docs/TSCG_PAPER_DETAIL.md](docs/TSCG_PAPER_DETAIL.md) · Setup: [skillreducer/tscg/README.md](skillreducer/tscg/README.md)
+Deep dive: [docs/tscg/PAPER.md](docs/tscg/PAPER.md) · [BEGINNER](docs/tscg/BEGINNER.md) · [USAGE](docs/tscg/USAGE.md)
 
 ### 3. SkillRevise — execution-grounded skill quality
 
@@ -73,7 +73,7 @@ Deep dive: [docs/TSCG_PAPER_DETAIL.md](docs/TSCG_PAPER_DETAIL.md) · Setup: [ski
 
 **In this repo.** Exposed as `skillreducer revise` — **not** wired into `reduce`. Use it when you care about behavior quality, not only token count.
 
-Deep dive: [src/skillrevise/README.md](src/skillrevise/README.md)
+Deep dive: [docs/skillrevise/PAPER.md](docs/skillrevise/PAPER.md) · [BEGINNER](docs/skillrevise/BEGINNER.md) · [USAGE](docs/skillrevise/USAGE.md)
 
 ---
 
@@ -250,7 +250,7 @@ skillrevise-benchmark --help
 skillrevise-benchmark path/to/tasks.json --manifest-kind skillsbench --limit 1
 ```
 
-Docs: [src/skillrevise/README.md](src/skillrevise/README.md) · benchmarks: [src/skillrevise/benchmarks/README.md](src/skillrevise/benchmarks/README.md)
+Docs: [docs/skillrevise/USAGE.md](docs/skillrevise/USAGE.md) · package: [src/skillrevise/README.md](src/skillrevise/README.md) · benchmarks: [src/skillrevise/benchmarks/README.md](src/skillrevise/benchmarks/README.md)
 ### CLI reference
 
 | Command / flag | Description |
@@ -374,11 +374,13 @@ ruff check skillreducer tests
 
 | Resource | Description |
 |----------|-------------|
-| [docs/PAPERS.md](docs/PAPERS.md) | **Paper index** — SkillReducer + TSCG + SkillRevise |
+| [docs/PAPER_DETAIL.md](docs/PAPER_DETAIL.md) | Hub: per-paper explanation, beginner, usage |
+| [docs/OVERVIEW.md](docs/OVERVIEW.md) | How the three papers fit together (full flow) |
+| [docs/PAPERS.md](docs/PAPERS.md) | **Paper index** — links to PAPER / BEGINNER / USAGE per paper |
+| [docs/skillreducer/](docs/skillreducer/) | SkillReducer explanation, beginner, usage |
+| [docs/tscg/](docs/tscg/) | TSCG explanation, beginner, usage |
+| [docs/skillrevise/](docs/skillrevise/) | SkillRevise explanation, beginner, usage |
 | [docs/REDUCTION_FLOW.md](docs/REDUCTION_FLOW.md) | Simple flow + one example |
-| [PAPER_DETAIL.md](PAPER_DETAIL.md) | SkillReducer paper (Gao et al.) in depth |
-| [docs/TSCG_PAPER_DETAIL.md](docs/TSCG_PAPER_DETAIL.md) | TSCG papers (Sakizli) in depth |
-| [src/skillrevise/README.md](src/skillrevise/README.md) | Vendored SkillRevise (Liu et al.) |
 | [CITATION.md](CITATION.md) | BibTeX / APA for all three papers |
 | [skill_reducer.pdf](skill_reducer.pdf) | SkillReducer paper (local copy) |
 
