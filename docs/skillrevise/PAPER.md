@@ -15,7 +15,7 @@
 **All SkillRevise framework design, algorithms, and empirical results are by Liu et al. (2026).**  
 This repository vendors the package and exposes it as a separate command — it does **not** run inside `reduce`. See [CITATION.md](../../CITATION.md).
 
-Hands-on: [BEGINNER.md](BEGINNER.md) · [USAGE.md](USAGE.md) · [src/skillrevise/README.md](../../src/skillrevise/README.md)
+Hands-on: [BEGINNER.md](BEGINNER.md) · [USAGE.md](USAGE.md) · Internals: [DEVELOPER.md](DEVELOPER.md) · [src/skillrevise/README.md](../../src/skillrevise/README.md)
 
 ---
 

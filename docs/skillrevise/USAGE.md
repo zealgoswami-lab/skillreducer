@@ -1,7 +1,7 @@
 # SkillRevise — usage details + full flow
 
 CLI and package usage for Liu et al. SkillRevise (vendored at `src/skillrevise/`).  
-Beginner: [BEGINNER.md](BEGINNER.md) · Paper: [PAPER.md](PAPER.md) · Package: [../../src/skillrevise/README.md](../../src/skillrevise/README.md)  
+Beginner: [BEGINNER.md](BEGINNER.md) · Paper: [PAPER.md](PAPER.md) · Developer: [DEVELOPER.md](DEVELOPER.md) · Package: [../../src/skillrevise/README.md](../../src/skillrevise/README.md)  
 Papers: [../PAPERS.md](../PAPERS.md) · All-papers overview: [../OVERVIEW.md](../OVERVIEW.md)
 
 ---

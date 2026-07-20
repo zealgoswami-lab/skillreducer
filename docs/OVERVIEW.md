@@ -6,7 +6,7 @@ This repository integrates **three research papers**. Each has its own explanati
 |---|--------|-------------------|------|
 | 1 | **SkillReducer** (Gao et al.) | Skill `description` + body tokens | [PAPER](skillreducer/PAPER.md) · [BEGINNER](skillreducer/BEGINNER.md) · [USAGE](skillreducer/USAGE.md) |
 | 2 | **TSCG** (Sakizli) | MCP / tool JSON schema tokens | [PAPER](tscg/PAPER.md) · [BEGINNER](tscg/BEGINNER.md) · [USAGE](tscg/USAGE.md) |
-| 3 | **SkillRevise** (Liu et al.) | Skill **quality** from traces | [PAPER](skillrevise/PAPER.md) · [BEGINNER](skillrevise/BEGINNER.md) · [USAGE](skillrevise/USAGE.md) |
+| 3 | **SkillRevise** (Liu et al.) | Skill **quality** from traces | [PAPER](skillrevise/PAPER.md) · [BEGINNER](skillrevise/BEGINNER.md) · [USAGE](skillrevise/USAGE.md) · [DEVELOPER](skillrevise/DEVELOPER.md) |
 
 **Papers:** [PAPERS.md](PAPERS.md) · **Citations:** [CITATION.md](../CITATION.md)
 
@@ -157,7 +157,7 @@ Deep dive: [tscg/PAPER.md](tscg/PAPER.md) · [USAGE](tscg/USAGE.md)
 | Revise | Principle-bound, execution-anchored edits |
 | Select | First verifier pass, else utility fallback |
 
-Deep dive: [skillrevise/PAPER.md](skillrevise/PAPER.md) · [USAGE](skillrevise/USAGE.md)
+Deep dive: [skillrevise/PAPER.md](skillrevise/PAPER.md) · [USAGE](skillrevise/USAGE.md) · [DEVELOPER](skillrevise/DEVELOPER.md)
 
 ---
 

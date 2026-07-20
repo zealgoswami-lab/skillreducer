@@ -2,7 +2,7 @@
 
 SkillRevise improves skill **behavior** from execution traces. It does **not** replace SkillReducer token compression.
 
-Related: [PAPER.md](PAPER.md) · [USAGE.md](USAGE.md) · [../OVERVIEW.md](../OVERVIEW.md) · [../PAPERS.md](../PAPERS.md)
+Related: [PAPER.md](PAPER.md) · [USAGE.md](USAGE.md) · [DEVELOPER.md](DEVELOPER.md) · [../OVERVIEW.md](../OVERVIEW.md) · [../PAPERS.md](../PAPERS.md)
 
 ---
 
@@ -94,5 +94,6 @@ skillreducer revise path/to/tasks.json --limit 1 --output runs/out.json
 |------|-----|
 | How the paper works | [PAPER.md](PAPER.md) |
 | Full CLI / benchmarks | [USAGE.md](USAGE.md) |
+| Internals / algorithms / file map | [DEVELOPER.md](DEVELOPER.md) |
 | Package layout | [src/skillrevise/README.md](../../src/skillrevise/README.md) |
 | Token reduction instead | [SkillReducer BEGINNER](../skillreducer/BEGINNER.md) |
