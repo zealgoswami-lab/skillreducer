@@ -2,7 +2,7 @@
 
 CLI, install, and configuration for skill token reduction (Gao et al.).  
 New here? Start with [BEGINNER.md](BEGINNER.md). Research background: [PAPER.md](PAPER.md).  
-Hub: [../PAPER_DETAIL.md](../PAPER_DETAIL.md) · Overview: [../OVERVIEW.md](../OVERVIEW.md).
+Papers: [../PAPERS.md](../PAPERS.md) · Overview: [../OVERVIEW.md](../OVERVIEW.md).
 
 Optional add-ons:
 - Tool schemas → [TSCG USAGE](../tscg/USAGE.md)

@@ -4,14 +4,14 @@ This repo implements **token reduction** for agent skills and (optionally) MCP t
 plus an **optional separate command** for execution-grounded skill revision.  
 Design and results belong to the paper authors — cite them, not only this GitHub project.
 
-**How they fit together:** [OVERVIEW.md](OVERVIEW.md) · **Hub (all paper docs):** [PAPER_DETAIL.md](PAPER_DETAIL.md)
+**How they fit together:** [OVERVIEW.md](OVERVIEW.md)
 
 | Paper | What it covers | In this repo | Docs |
 |-------|----------------|--------------|------|
 | **SkillReducer** | Compress skill descriptions + bodies | Stages 1–3 | [PAPER](skillreducer/PAPER.md) · [BEGINNER](skillreducer/BEGINNER.md) · [USAGE](skillreducer/USAGE.md) |
 | **TSCG** *(separate)* | Compress MCP / tool JSON schemas | Optional `--tscg` via `@tscg/core` | [PAPER](tscg/PAPER.md) · [BEGINNER](tscg/BEGINNER.md) · [USAGE](tscg/USAGE.md) |
 | **TSCG + Agentic RAG** | Why schema compression unlocks tight budgets | Motivation for tool-schema step | [PAPER § companion](tscg/PAPER.md#companion-paper-agentic-rag) |
-| **SkillRevise** *(separate)* | Trace-conditioned skill revision (quality) | Vendored `src/skillrevise/` + `skillreducer revise` | [PAPER](skillrevise/PAPER.md) · [BEGINNER](skillrevise/BEGINNER.md) · [USAGE](skillrevise/USAGE.md) |
+| **SkillRevise** *(separate)* | Trace-conditioned skill revision (quality) | Vendored `src/skillrevise/` + `skillreducer revise` | [PAPER](skillrevise/PAPER.md) · [BEGINNER](skillrevise/BEGINNER.md) · [USAGE](skillrevise/USAGE.md) · [DEVELOPER](skillrevise/DEVELOPER.md) |
 
 ```text
 Skill quality (optional)  →  SkillRevise (Liu et al.)   →  skillreducer revise …

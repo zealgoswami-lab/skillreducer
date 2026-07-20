@@ -2,7 +2,7 @@
 
 Compress MCP / tool JSON schemas with Sakizli’s `@tscg/core` after (or with) SkillReducer.  
 Beginner: [BEGINNER.md](BEGINNER.md) · Paper: [PAPER.md](PAPER.md)  
-Hub: [../PAPER_DETAIL.md](../PAPER_DETAIL.md) · Overview: [../OVERVIEW.md](../OVERVIEW.md)
+Papers: [../PAPERS.md](../PAPERS.md) · Overview: [../OVERVIEW.md](../OVERVIEW.md)
 
 ---
 

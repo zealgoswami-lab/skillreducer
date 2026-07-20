@@ -8,7 +8,7 @@
 
 > **Scope.** This file explains the **SkillReducer** paper (Gao et al.) — skill `SKILL.md` tokens.  
 > Tool schemas: [TSCG PAPER](../tscg/PAPER.md). Quality revision: [SkillRevise PAPER](../skillrevise/PAPER.md).  
-> Hub: [PAPER_DETAIL.md](../PAPER_DETAIL.md) · Overview: [OVERVIEW.md](../OVERVIEW.md) · Index: [PAPERS.md](../PAPERS.md).  
+> Papers: [PAPERS.md](../PAPERS.md) · Overview: [OVERVIEW.md](../OVERVIEW.md).  
 > Usage + full flow: [USAGE.md](USAGE.md) · Beginner: [BEGINNER.md](BEGINNER.md).
 
 This document explains the SkillReducer paper in depth. **All SkillReducer framework design, algorithms, and empirical results are by Gao, Li, Yuan, Ji, Ma, and Wang (2026).** See [CITATION.md](../../CITATION.md) for proper attribution.
