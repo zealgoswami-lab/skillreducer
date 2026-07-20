@@ -2,7 +2,7 @@
 
 SkillRevise improves skill **behavior** from execution traces. It does **not** replace SkillReducer token compression.
 
-Related: [PAPER.md](PAPER.md) · [USAGE.md](USAGE.md) · [DEVELOPER.md](DEVELOPER.md) · [../OVERVIEW.md](../OVERVIEW.md) · [../PAPERS.md](../PAPERS.md)
+Related: [PAPER.md](PAPER.md) · [USAGE.md](USAGE.md) · [DEVELOPER.md](DEVELOPER.md) · [../../USAGE.md](../../USAGE.md) (top-level) · [../OVERVIEW.md](../OVERVIEW.md) · [../PAPERS.md](../PAPERS.md)
 
 ---
 

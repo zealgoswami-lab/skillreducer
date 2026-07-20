@@ -143,7 +143,7 @@ Docs: [docs/skillrevise/PAPER.md](docs/skillrevise/PAPER.md) · [USAGE](docs/ski
 | TSCG algorithms or numbers | Sakizli (2026) |
 | SkillRevise algorithms or numbers | Liu et al. (2026) |
 
-Paper index: [docs/PAPERS.md](docs/PAPERS.md) · Overview: [docs/OVERVIEW.md](docs/OVERVIEW.md)
+Paper index: [docs/PAPERS.md](docs/PAPERS.md) · Overview: [docs/OVERVIEW.md](docs/OVERVIEW.md) · Docs index: [docs/README.md](docs/README.md) · Usage: [USAGE.md](USAGE.md)
 
 ## Acknowledgment
 

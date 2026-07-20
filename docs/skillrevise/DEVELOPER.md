@@ -4,6 +4,8 @@ Deep dive for contributors: how the vendored package works, which files own each
 
 | Related docs | |
 |--------------|--|
+| Top-level usage | [../../USAGE.md](../../USAGE.md) |
+| Docs index | [../README.md](../README.md) |
 | Paper concepts | [PAPER.md](PAPER.md) |
 | First run | [BEGINNER.md](BEGINNER.md) |
 | CLI flags | [USAGE.md](USAGE.md) |

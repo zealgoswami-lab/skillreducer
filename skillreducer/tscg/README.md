@@ -255,6 +255,8 @@ TSCG (tool schemas)
 
 ## Related
 
+- **Top-level usage:** [../../USAGE.md](../../USAGE.md)
+- Docs index: [../../docs/README.md](../../docs/README.md)
 - Main beginner guide (includes how reduction works): [../../docs/skillreducer/BEGINNER.md](../../docs/skillreducer/BEGINNER.md)
 - Full project README: [../../README.md](../../README.md)
 - **TSCG docs:** [PAPER](../../docs/tscg/PAPER.md) · [BEGINNER](../../docs/tscg/BEGINNER.md) · [USAGE](../../docs/tscg/USAGE.md)

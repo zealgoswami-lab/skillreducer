@@ -172,8 +172,10 @@ TSCG (tool schemas)          … before -> after tokens
 
 | Doc | When |
 |-----|------|
-| [docs/skillreducer/BEGINNER.md](skillreducer/BEGINNER.md) | Install and first steps (SkillReducer) |
-| [docs/tscg/BEGINNER.md](tscg/BEGINNER.md) | MCP / tool schema beginner guide |
-| [docs/OVERVIEW.md](OVERVIEW.md) | How the three papers fit |
-| [docs/PAPERS.md](PAPERS.md) | Paper index + links |
+| [../USAGE.md](../USAGE.md) | Top-level install / CLI / config |
+| [README.md](README.md) | Documentation index |
+| [skillreducer/BEGINNER.md](skillreducer/BEGINNER.md) | Install and first steps (SkillReducer) |
+| [tscg/BEGINNER.md](tscg/BEGINNER.md) | MCP / tool schema beginner guide |
+| [OVERVIEW.md](OVERVIEW.md) | How the three papers fit |
+| [PAPERS.md](PAPERS.md) | Paper index + links |
 | [TSCG README](../skillreducer/tscg/README.md) | MCP JSON formats / errors |

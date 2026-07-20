@@ -1,8 +1,9 @@
 # TSCG — usage details + full flow
 
+**Top-level toolkit usage:** [../../USAGE.md](../../USAGE.md)  
 Compress MCP / tool JSON schemas with Sakizli’s `@tscg/core` after (or with) SkillReducer.  
 Beginner: [BEGINNER.md](BEGINNER.md) · Paper: [PAPER.md](PAPER.md)  
-Papers: [../PAPERS.md](../PAPERS.md) · Overview: [../OVERVIEW.md](../OVERVIEW.md)
+Docs index: [../README.md](../README.md) · Papers: [../PAPERS.md](../PAPERS.md) · Overview: [../OVERVIEW.md](../OVERVIEW.md)
 
 ---
 

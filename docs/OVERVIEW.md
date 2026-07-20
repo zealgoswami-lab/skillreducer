@@ -2,6 +2,8 @@
 
 This repository integrates **three research papers**. Each has its own explanation, beginner guide, and usage doc under `docs/`.
 
+**Run the tools:** [../USAGE.md](../USAGE.md) · **Docs index:** [README.md](README.md)
+
 | # | Paper | What it optimizes | Docs |
 |---|--------|-------------------|------|
 | 1 | **SkillReducer** (Gao et al.) | Skill `description` + body tokens | [PAPER](skillreducer/PAPER.md) · [BEGINNER](skillreducer/BEGINNER.md) · [USAGE](skillreducer/USAGE.md) |

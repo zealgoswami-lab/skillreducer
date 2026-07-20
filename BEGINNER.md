@@ -1,6 +1,9 @@
-# Beginner guides — by paper
+# Beginner guides
 
-Start here depending on what you want to do:
+**How to run the toolkit:** [USAGE.md](USAGE.md)  
+**Docs index:** [docs/README.md](docs/README.md)
+
+Pick a beginner guide by goal:
 
 | Goal | Guide |
 |------|--------|
@@ -10,4 +13,11 @@ Start here depending on what you want to do:
 | How the three papers fit | [docs/OVERVIEW.md](docs/OVERVIEW.md) |
 | Papers index | [docs/PAPERS.md](docs/PAPERS.md) |
 
-Usage / CLI details: [SkillReducer USAGE](docs/skillreducer/USAGE.md) · [TSCG USAGE](docs/tscg/USAGE.md) · [SkillRevise USAGE](docs/skillrevise/USAGE.md)
+Topic-specific usage (after the top-level guide):
+
+| Topic | USAGE |
+|-------|--------|
+| All CLI / config | [USAGE.md](USAGE.md) |
+| SkillReducer | [docs/skillreducer/USAGE.md](docs/skillreducer/USAGE.md) |
+| TSCG | [docs/tscg/USAGE.md](docs/tscg/USAGE.md) |
+| SkillRevise | [docs/skillrevise/USAGE.md](docs/skillrevise/USAGE.md) |

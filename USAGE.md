@@ -1,45 +1,24 @@
-# SkillReducer — usage details + full flow
+# Usage
 
-**Top-level toolkit usage:** [../../USAGE.md](../../USAGE.md)  
-CLI, install, and configuration for skill token reduction (Gao et al.).  
-New here? Start with [BEGINNER.md](BEGINNER.md). Research background: [PAPER.md](PAPER.md).  
-Docs index: [../README.md](../README.md) · Papers: [../PAPERS.md](../PAPERS.md) · Overview: [../OVERVIEW.md](../OVERVIEW.md).
+Install, CLI, configuration, and common workflows for this toolkit.  
+New here? Start with [BEGINNER.md](BEGINNER.md). Project overview: [README.md](README.md).
 
-Optional add-ons:
-- Tool schemas → [TSCG USAGE](../tscg/USAGE.md)
-- Quality from traces → [SkillRevise USAGE](../skillrevise/USAGE.md)
+**Deeper docs by topic** (papers, beginners, internals): [docs/README.md](docs/README.md)
 
----
-
-## Full flow overview
+| You want… | Command / flag | Detail doc |
+|-----------|----------------|------------|
+| Audit skill tokens | `skillreducer audit …` | below |
+| Compress `SKILL.md` | `skillreducer reduce` / `agent` | [docs/skillreducer/USAGE.md](docs/skillreducer/USAGE.md) |
+| Compress tool JSON | `reduce … --tscg --tools …` | [docs/tscg/USAGE.md](docs/tscg/USAGE.md) |
+| Improve skill quality | `skillreducer revise` / `skillrevise` | [docs/skillrevise/USAGE.md](docs/skillrevise/USAGE.md) |
 
 ```text
-1. audit          → token report + F1/F2/F3 flags
-2. reduce/agent   → Stage 1 (description) → Stage 2 (body) → Stage 3 (scripts)
-3. optional --tscg → compress tools.json → mcp_manifest.tscg.*
-4. inspect optimized/<skill>/  (never in-place by default)
+Optional quality   →  skillreducer revise …
+Skill text tokens  →  skillreducer reduce / agent   →  lean SKILL.md + refs + scripts/
+Tool schemas       →  reduce … --tscg --tools …     →  mcp_manifest.tscg.*
 ```
 
-```mermaid
-flowchart TB
-    In[Skill folder SKILL.md] --> Audit[audit]
-    Audit --> R[reduce / agent]
-    R --> S1[Stage 1 routing]
-    S1 --> S2[Stage 2 progressive disclosure]
-    S2 --> S3[Stage 3 scripts]
-    S3 --> Out[optimized/skill]
-    Tools[tools.json optional] --> TSCG[--tscg]
-    TSCG --> Out
-```
-
-| Stage | What changes | Typical flags |
-|-------|----------------|---------------|
-| 1 | YAML `description` | `--stage 1` |
-| 2 | Body → core + on-demand refs | `--stage 2` |
-| 3 | Code blocks → `scripts/` | `--stage 3` |
-| TSCG | Tool schemas (other paper) | `--tscg --tools …` |
-
-Worked example: [../REDUCTION_FLOW.md](../REDUCTION_FLOW.md).
+---
 
 ## Install
 
@@ -63,6 +42,7 @@ python build_binary.py
 ```bash
 pip install -e .
 # optional: pip install -e ".[dev]"
+# SkillRevise analysis plots: pip install -e ".[revise-analysis]"
 ```
 
 Copy `.env.example` to `.env` and set credentials:
@@ -85,9 +65,19 @@ skillreducer reduce data/pdf-processing
 
 ---
 
-## Usage
+## Quick start
 
-### Quick start (sample skills in [`data/`](data/))
+Sample skills live in [`data/`](data/). See [data/README.md](data/README.md).
+
+```bash
+# 1) Token report
+skillreducer audit data/pdf-processing
+
+# 2) Compress without an API key
+skillreducer reduce data/pdf-processing --no-llm
+
+# Result: optimized/pdf-processing/
+```
 
 ```bash
 python run.py audit data --recursive
@@ -95,16 +85,20 @@ python run.py reduce data/pdf-processing --no-llm
 python run.py agent data/marketing-strategy --output optimized/
 ```
 
-See [../../data/README.md](../../data/README.md) for what each sample skill demonstrates.
+Worked example + diagrams: [docs/REDUCTION_FLOW.md](docs/REDUCTION_FLOW.md).
 
-### Audit (token report + issue flags)
+---
+
+## CLI — SkillReducer (`audit` / `reduce` / `agent`)
+
+### Audit
 
 ```bash
 skillreducer audit path/to/my-skill
 skillreducer audit ./skills --recursive
 ```
 
-### Reduce — full SkillReducer pipeline (Stages 1–3)
+### Reduce — Stages 1–3
 
 Writes to `optimized/` by default (never in-place):
 
@@ -126,6 +120,14 @@ skillreducer reduce ~/.claude/skills --recursive
 skillreducer reduce ./my-skill-library --recursive
 ```
 
+| Stage | What it does |
+|-------|----------------|
+| **1** | Compress / generate YAML `description` (routing) |
+| **2** | Keep core rules in `SKILL.md`; move examples/background to refs |
+| **3** | Extract approved Python/bash fences into `scripts/` |
+
+More: [docs/skillreducer/USAGE.md](docs/skillreducer/USAGE.md) · stages: [stage1](skillreducer/stage1/README.md) · [stage2](skillreducer/stage2/README.md) · [stage3](skillreducer/stage3/README.md)
+
 ### Agent — same pipeline via Agno
 
 ```bash
@@ -143,45 +145,57 @@ from skillreducer.agent import SkillReducerAgent
 agent = SkillReducerAgent()
 result = agent.optimize(Path("path/to/my-skill"), output_dir=Path("optimized"))
 
-print(result.skill_md)           # optimized SKILL.md path
-print(result.reference_files)    # examples.md, templates.md, etc.
-print(result.agent_summary)      # token savings summary
+print(result.skill_md)
+print(result.reference_files)
+print(result.agent_summary)
 ```
 
-### Optional TSCG (paper 2) — compress tool schemas
+---
 
-Needs Node ≥ 18 and a one-time install:
+## Optional — TSCG (tool / MCP schemas)
+
+Needs Node ≥ 18 and a one-time install. **You must provide** tools JSON.
 
 ```bash
-cd skillreducer/tscg && npm install
+cd skillreducer/tscg && npm install && cd ../..
 skillreducer reduce path/to/my-skill --tscg --tools tools.json
+# or: mcp_manifest.json inside the skill folder, then --tscg
 ```
 
 Writes `mcp_manifest.json`, `mcp_manifest.tscg.txt`, and `mcp_manifest.tscg.json` into the optimized skill folder.
 
-### Optional SkillRevise (paper 3) — quality from traces
+Without tools JSON: `TSCG skipped: no tools` (skill reduction still runs).
 
-**Separate command** — does not run inside `reduce`:
+Full guide: [docs/tscg/USAGE.md](docs/tscg/USAGE.md) · [docs/tscg/BEGINNER.md](docs/tscg/BEGINNER.md)
+
+---
+
+## Optional — SkillRevise (quality from traces)
+
+**Separate command** — does **not** run inside `reduce`:
 
 ```bash
 skillreducer revise --skillrevise-help
-skillrevise path/to/tasks.json --limit 1 --output runs/out.json
+skillrevise path/to/tasks.json --limit 1 --baseline-only --output runs/out.json
+skillrevise path/to/tasks.json --initial-skill path/to/SKILL.md --max-revisions 2
 
-# Benchmark / paper evals only (SkillsBench, etc.):
+# Benchmark / paper evals only:
 skillrevise-benchmark --help
 skillrevise-benchmark path/to/tasks.json --manifest-kind skillsbench --limit 1
 ```
 
-Docs: [../skillrevise/USAGE.md](../skillrevise/USAGE.md) · benchmarks: [../../src/skillrevise/benchmarks/README.md](../../src/skillrevise/benchmarks/README.md)
+Full guide: [docs/skillrevise/USAGE.md](docs/skillrevise/USAGE.md) · internals: [docs/skillrevise/DEVELOPER.md](docs/skillrevise/DEVELOPER.md)
 
-### CLI reference
+---
+
+## CLI reference
 
 | Command / flag | Description |
 |----------------|-------------|
 | `skillreducer audit <path>` | Token report + F1/F2/F3 issue flags |
-| `skillreducer reduce <path>` | Stages 1–3 (OpenAI / configured LLM client) |
-| `skillreducer agent <path>` | Same pipeline via Agno agent |
-| `skillreducer revise …` | SkillRevise (Liu et al.) — quality, not compression |
+| `skillreducer reduce <path>` | Stages 1–3 |
+| `skillreducer agent <path>` | Same pipeline via Agno |
+| `skillreducer revise …` | SkillRevise — quality, not compression |
 | `--stage 1` / `2` / `3` | Run a single SkillReducer stage |
 | `--tscg` / `--tools <json>` | Compress tool schemas with TSCG after reduce |
 | `--recursive` | Process all skills under a directory |
@@ -189,17 +203,13 @@ Docs: [../skillrevise/USAGE.md](../skillrevise/USAGE.md) · benchmarks: [../../s
 | `--no-llm` | Heuristic mode (no API calls) |
 | `--output` / `-o` | Output directory (default: `optimized`) |
 
-Simple flow + worked example: [../REDUCTION_FLOW.md](../REDUCTION_FLOW.md)
-
 ---
 
 ## Configuration
 
-### API key, base URL, and models (from env)
-
 Credentials and model ids are read from `.env` (auto-loaded on startup) or the environment. Env vars override `config.yaml`.
 
-`.env` is discovered automatically: package root → parent directories of cwd → cwd (later paths win among `.env` files).
+`.env` discovery: package root → parent directories of cwd → cwd (later paths win among `.env` files).
 
 | Setting | Env name | YAML key |
 |---------|----------|----------|
@@ -229,11 +239,11 @@ models:
   evaluation: gpt-4o-mini
 
 thresholds:
-  short_description_tokens: 40   # Stage 1: generate if description ≤ this
-  min_reference_tokens: 30       # Stage 2: drop tiny reference files
-  min_script_tokens: 20          # Stage 3: heuristic / LLM size hint
-  max_restore_steps: 3           # Stage 1 Phase 2 restore
-  max_feedback_iterations: 2     # Stage 2 Gate 2 (config only; not wired yet)
+  short_description_tokens: 40
+  min_reference_tokens: 30
+  min_script_tokens: 20
+  max_restore_steps: 3
+  max_feedback_iterations: 2
 
 oracle:
   num_test_queries: 8
@@ -254,12 +264,13 @@ Without an API key, LLM features are disabled and heuristics are used. Use `--no
 
 ## Standard skill layout
 
-```
+```text
 my-skill/
 ├── SKILL.md          # frontmatter + compressed core body (always loaded)
 ├── examples.md       # on-demand (Stage 2)
 ├── templates.md      # on-demand (Stage 2)
 ├── background.md     # on-demand (Stage 2)
+├── mcp_manifest.json # optional; or pass --tools
 └── scripts/          # executable tools (Stage 3; not context-injected)
     ├── extract.py
     └── batch.sh
@@ -282,27 +293,27 @@ After optimization, reference files include routing metadata (`when`, `topics`) 
 
 ---
 
-## Safety
+## Safety & development
 
 - Never modifies skills in-place by default; output goes to `--output`.
-
-## Development
 
 ```bash
 pytest
 ruff check skillreducer tests
 ```
 
-## Research & citation
+---
 
-| Resource | Description |
-|----------|-------------|
-| [../PAPERS.md](../PAPERS.md) | Paper index |
-| [../OVERVIEW.md](../OVERVIEW.md) | How the three papers fit |
-| [PAPER.md](PAPER.md) | SkillReducer explanation |
-| [../tscg/PAPER.md](../tscg/PAPER.md) | TSCG explanation |
-| [../skillrevise/PAPER.md](../skillrevise/PAPER.md) | SkillRevise explanation |
-| [../../CITATION.md](../../CITATION.md) | BibTeX / APA |
-| [../../skill_reducer.pdf](../../skill_reducer.pdf) | SkillReducer paper (local copy) |
+## Docs map
 
-If you use this tool in research, please cite the **SkillReducer paper** (Gao et al., 2026) for skill debloating, the **TSCG papers** (Sakizli, 2026) when discussing `--tscg`, and **SkillRevise** (Liu et al., 2026) for `revise` — not this repository alone.
+| Path | Contents |
+|------|----------|
+| [USAGE.md](USAGE.md) | **This file** — top-level usage |
+| [BEGINNER.md](BEGINNER.md) | Beginner hub by paper |
+| [docs/README.md](docs/README.md) | Full documentation index |
+| [docs/skillreducer/](docs/skillreducer/) | SkillReducer PAPER · BEGINNER · USAGE |
+| [docs/tscg/](docs/tscg/) | TSCG PAPER · BEGINNER · USAGE |
+| [docs/skillrevise/](docs/skillrevise/) | SkillRevise PAPER · BEGINNER · USAGE · DEVELOPER |
+| [docs/OVERVIEW.md](docs/OVERVIEW.md) | How the three papers fit |
+| [docs/PAPERS.md](docs/PAPERS.md) | Paper index + arXiv links |
+| [CITATION.md](CITATION.md) | BibTeX / APA |

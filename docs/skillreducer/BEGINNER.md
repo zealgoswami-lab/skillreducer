@@ -1,6 +1,6 @@
 # SkillReducer — Beginner guide
 
-Related: [PAPER.md](PAPER.md) (why / research) · [USAGE.md](USAGE.md) (CLI / config) · [../OVERVIEW.md](../OVERVIEW.md) · [../PAPERS.md](../PAPERS.md)
+Related: [PAPER.md](PAPER.md) (why / research) · [USAGE.md](USAGE.md) (topic CLI) · [../../USAGE.md](../../USAGE.md) (top-level toolkit usage) · [../OVERVIEW.md](../OVERVIEW.md) · [../PAPERS.md](../PAPERS.md)
 
 This guide is for people who are new to SkillReducer.  
 You do **not** need to read the research paper first.

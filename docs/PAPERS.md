@@ -4,7 +4,7 @@ This repo implements **token reduction** for agent skills and (optionally) MCP t
 plus an **optional separate command** for execution-grounded skill revision.  
 Design and results belong to the paper authors — cite them, not only this GitHub project.
 
-**How they fit together:** [OVERVIEW.md](OVERVIEW.md)
+**How they fit together:** [OVERVIEW.md](OVERVIEW.md) · **Docs index:** [README.md](README.md) · **Top-level usage:** [../USAGE.md](../USAGE.md)
 
 | Paper | What it covers | In this repo | Docs |
 |-------|----------------|--------------|------|
@@ -30,6 +30,8 @@ Neither paper’s compression requires sending your data to a cloud LLM for the 
 
 | Resource | Link |
 |----------|------|
+| Docs index | [README.md](README.md) |
+| Top-level usage | [../USAGE.md](../USAGE.md) |
 | Overview (all three) | [OVERVIEW.md](OVERVIEW.md) |
 | SkillReducer arXiv | https://arxiv.org/abs/2603.29919 |
 | TSCG arXiv | https://arxiv.org/abs/2605.04107 |

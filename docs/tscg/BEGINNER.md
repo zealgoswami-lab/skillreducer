@@ -1,6 +1,6 @@
 # TSCG — Beginner guide
 
-Related: [PAPER.md](PAPER.md) · [USAGE.md](USAGE.md) · [../OVERVIEW.md](../OVERVIEW.md) · [../PAPERS.md](../PAPERS.md)
+Related: [PAPER.md](PAPER.md) · [USAGE.md](USAGE.md) · [../../USAGE.md](../../USAGE.md) (top-level) · [../OVERVIEW.md](../OVERVIEW.md) · [../PAPERS.md](../PAPERS.md)
 
 This folder is **optional**.  
 Use it only if you want to cut tokens from **MCP / tool schemas**, not from `SKILL.md` text.
