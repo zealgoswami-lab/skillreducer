@@ -14,6 +14,7 @@ from skillreducer.config import (
     resolve_compression_model,
 )
 from skillreducer.llm.json_util import parse_llm_json
+from skillreducer.models import LlmUsage
 
 
 class LLMClient:
@@ -40,6 +41,7 @@ class LLMClient:
             self._client = OpenAI(**kwargs)
             self._enabled = config.use_llm
         self._config = config
+        self.usage = LlmUsage()
 
     @property
     def enabled(self) -> bool:
@@ -59,6 +61,7 @@ class LLMClient:
             messages=messages,
             temperature=0,
         )
+        self.usage.absorb(LlmUsage.from_openai_response(response))
         return (response.choices[0].message.content or "").strip()
 
     def complete_json(self, prompt: str, model: str | None = None, system: str | None = None) -> Any:

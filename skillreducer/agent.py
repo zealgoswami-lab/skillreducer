@@ -174,7 +174,8 @@ class SkillReducerAgent:
         summary = (
             f"Optimized '{skill.name}': "
             f"{report.original_stats.total} -> {report.optimized_stats.total} tokens "
-            f"({report.total_savings * 100:.1f}% savings)."
+            f"({report.total_savings * 100:.1f}% savings). "
+            f"LLM used {report.llm_usage.summary()}."
         )
 
         return SkillOptimizationResult(

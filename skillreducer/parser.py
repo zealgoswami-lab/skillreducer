@@ -10,7 +10,7 @@ from skillreducer.tokenizer import count_tokens
 
 SKILL_FILENAMES = ("SKILL.md", "skill.md")
 REFERENCE_EXTENSIONS = {".md", ".txt", ".json", ".yaml", ".yml"}
-SKIP_DIRS = {"scripts", "__pycache__", ".git", "node_modules"}
+SKIP_DIRS = {"scripts", "__pycache__", ".git", "node_modules", "skillreducer_results"}
 
 
 def resolve_skill_md(path: Path) -> Path:

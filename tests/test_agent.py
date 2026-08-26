@@ -64,7 +64,7 @@ def test_skill_reducer_agent_optimize_dry_run(
         compressed=True,
     )
 
-    from skillreducer.models import ReduceReport, TokenStats
+    from skillreducer.models import LlmUsage, ReduceReport, TokenStats
 
     mock_reduce.return_value = ReduceReport(
         source=skill_dir / "SKILL.md",
@@ -72,6 +72,7 @@ def test_skill_reducer_agent_optimize_dry_run(
         original_stats=TokenStats(10, 100, 0),
         optimized_stats=TokenStats(5, 50, 0),
         files_written=["SKILL.md"],
+        llm_usage=LlmUsage(input_tokens=80, output_tokens=20, total_tokens=100, calls=3),
     )
 
     config = Config(api_key="test-key", use_llm=True)
@@ -81,6 +82,8 @@ def test_skill_reducer_agent_optimize_dry_run(
     assert result.input_dir == skill_dir.resolve()
     assert result.report is not None
     assert "Optimized" in result.agent_summary
+    assert "LLM used 100 tokens" in result.agent_summary
+    assert "80 in / 20 out" in result.agent_summary
     mock_reduce.assert_called_once()
 
 

@@ -79,6 +79,9 @@ def print_reduce_report(report: ReduceReport) -> None:
             f"({t.savings * 100:.1f}% savings)"
         )
 
+    console.print("\n[bold]LLM usage[/bold]")
+    console.print(f"  {report.llm_usage.summary()}")
+
     if report.files_written:
         console.print("\n[bold]Files written[/bold]")
         for name in report.files_written:

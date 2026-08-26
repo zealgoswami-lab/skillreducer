@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from skillreducer.llm.json_util import parse_llm_json
+from skillreducer.models import LlmUsage
 
 try:
     from agno.agent import Agent
@@ -18,6 +19,7 @@ class AgnoLLMClient:
     def __init__(self, agent: Agent) -> None:
         self._agent = agent
         self._enabled = True
+        self.usage = LlmUsage()
 
     @property
     def enabled(self) -> bool:
@@ -26,6 +28,7 @@ class AgnoLLMClient:
     def complete(self, prompt: str, model: str | None = None, system: str | None = None) -> str:
         message = f"{system}\n\n{prompt}" if system else prompt
         run = self._agent.run(message)
+        self.usage.absorb(LlmUsage.from_agno_run(run))
         content = run.content
         if content is None:
             return ""

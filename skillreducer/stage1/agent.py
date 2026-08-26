@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from skillreducer.config import Config, resolve_api_key
 from skillreducer.llm.agno_client import AgnoLLMClient
 from skillreducer.model import create_routing_model
-from skillreducer.models import Skill
+from skillreducer.models import LlmUsage, Skill
 from skillreducer.stage1.compress import compress_description
 from skillreducer.stage1.generate import generate_description
 from skillreducer.stage1.oracle import (
@@ -86,6 +86,12 @@ class Stage1RoutingAgent:
     def llm(self) -> AgnoLLMClient:
         """LLM adapter wrapping the routing agent."""
         return self._llm
+
+    @property
+    def usage(self) -> LlmUsage:
+        """Accumulated routing-agent LLM token usage."""
+        usage = getattr(self._llm, "usage", None)
+        return usage if isinstance(usage, LlmUsage) else LlmUsage()
 
     def build_oracle(
         self,
