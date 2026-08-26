@@ -22,4 +22,5 @@ def test_reduce_dry_run_improves_or_maintains_tokens() -> None:
     )
     assert report.original_stats.total > 0
     assert report.optimized_stats.total <= report.original_stats.total
+    assert report.llm_usage.calls == 0
 

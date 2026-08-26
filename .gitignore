@@ -13,5 +13,6 @@ venv/
 .ruff_cache/
 optimized/
 output/
+skillreducer_results/
 .DS_Store
 skillreducer/tscg/node_modules/

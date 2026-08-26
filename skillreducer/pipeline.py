@@ -8,7 +8,7 @@ from typing import Any
 from skillreducer.audit import audit_skill
 from skillreducer.config import Config
 from skillreducer.llm.client import LLMClient
-from skillreducer.models import ReduceReport, TokenStats, TscgStats
+from skillreducer.models import LlmUsage, ReduceReport, TokenStats, TscgStats
 from skillreducer.parser import parse_skill_md, write_skill_md
 from skillreducer.stage1.compress import compress_description
 from skillreducer.stage1.agent import Stage1RoutingAgent
@@ -48,6 +48,7 @@ def reduce_skill(
 
     skill = parse_skill_md(path)
     llm_client = llm if llm is not None else LLMClient(config)
+    usage_before = _llm_usage_snapshot(llm_client, stage1_agent)
     original = audit_skill(path, config)
     notes: list[str] = []
 
@@ -203,6 +204,7 @@ def reduce_skill(
         files_written=files_written,
         stage_notes=notes,
         tscg_stats=tscg_stats,
+        llm_usage=_llm_usage_snapshot(llm_client, stage1_agent).since(usage_before),
     )
 
 
@@ -283,3 +285,15 @@ def _run_tscg_step(
     if not dry_run:
         files_written.extend(write_tscg_outputs(out_skill_dir, tools, result))
     return stats, files_written, notes
+
+
+def _llm_usage_snapshot(*providers: Any) -> LlmUsage:
+    """Copy and sum ``usage`` from LLM clients or stage agents."""
+    total = LlmUsage()
+    for provider in providers:
+        if provider is None:
+            continue
+        usage = getattr(provider, "usage", None)
+        if isinstance(usage, LlmUsage):
+            total.absorb(usage)
+    return total
